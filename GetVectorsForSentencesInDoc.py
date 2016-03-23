@@ -1,6 +1,8 @@
 """
 USAGE:
 python  <Source-document-name> <output-file-name>
+
+e.g: python ./GetVectorsForSentencesInDoc.py ../TEST_docs_Parsed/d30001t/C1 C1
 """
 
 import gensim, logging
