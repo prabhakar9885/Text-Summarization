@@ -1,3 +1,10 @@
+"""
+Given the path for a specific file in curfile variable, it gives k clusters of sentences.
+Just run the code and it gives k number of clusters.
+"""
+
+
+
 from calculate_idf import getfiles
 from nltk import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
@@ -12,10 +19,15 @@ def calculate_similarity(vec1, vec2, idf):
 	numer = 0.0
 	denom1 = 0.0
 	denom2 = 0.0 
-	for i in xrange(len(vec1)):
-		numer += (vec1[i]*vec2[i]*idf.values()[i]*idf.values()[i])
-		denom1 += (vec1[i]*vec1[i]*idf.values()[i]*idf.values()[i])
-		denom2 += (vec2[i]*vec2[i]*idf.values()[i]*idf.values()[i])
+	
+	for key in vec1:
+		if key in vec2:
+			numer += (vec1[key]*vec2[key]*idf.values()[key]*idf.values()[key])
+		denom1 += (vec1[key]*vec1[key]*idf.values()[key]*idf.values()[key])
+	
+	for key in vec2:	
+		denom2 += (vec2[key]*vec2[key]*idf.values()[key]*idf.values()[key])
+	
 	denom1 = denom1**0.5
 	denom2 = denom2**0.5
 	return numer/(denom1*denom2)  
@@ -35,10 +47,13 @@ def createvec(curfile):
 		tokens = [token for token in tokens if token not in set(string.punctuation) and token not in stops]
 		for j in xrange(len(tokens)):
 			tokens[j] = stem(tokens[j])
-		temp = [0.0] * len(index)
+		temp = {}
 		for token in tokens:
-			temp[index[token]] += 1
-		docvec.append(temp)
+			if token in temp:
+				temp[index[token]] += 1.0
+			else:
+				temp[index[token]] = 1.0
+		docvec.append(dict(temp))
 	return docvec
 
 def kmeans(docvec, k, idf):
@@ -51,34 +66,33 @@ def kmeans(docvec, k, idf):
 	while len(centroids) != k:
 		r = random.randint(0,len(docvec)-1)
 		if docvec[r] not in centroids:
-			centroids.append(docvec[r])
-	while iterations != 2:
-		print iterations
+			centroids.append(dict(docvec[r]))
+	while iterations != 50:
 		iterations += 1
 		for vec in docvec:
-			print vec
 			maxd = -1.0
 			cent = 0
 			for i in xrange(k):
-				dist = calculate_similarity(vec, centroids[i], idf)
-				print dist
-				if dist > maxd:
-					maxd = dist
+				sim = calculate_similarity(vec, centroids[i], idf)
+				if sim > maxd:
+					maxd = sim
 					cent = i
-			clusters[cent].append(vec)
+			clusters[cent].append(dict(vec))
 
 		for i in xrange(k):
-			print i
-			print '--'
-			temp = [0] * len(index)
+			temp = {}
 			for member in clusters[i]:
-				temp = map(add, temp, member)
+				for key in member:
+					if key in temp:
+						temp[key] += 1
+					else:
+						temp[key] = 1
 			myint = float(len(clusters[i]))
 			
 			if myint!= 0:
-				temp = [x/myint for x in temp]	
-				for j in xrange(len(centroids[i])):
-					centroids[i][j] = temp[j]
+				for key in temp:
+					temp[key] = temp[key]/myint	
+				centroids[i] = dict(temp)
 	return clusters
 
 
