@@ -1,12 +1,11 @@
 
 import pickle as p
 import sys
-import k-means as km
+import k_means as km
 import math as m
 
-ifd_file = sys.argv[1]
-idf = p.load( ifd_file )
 
+idf = []
 
 
 """
@@ -16,10 +15,11 @@ Returns L(S)
 def get_coverage_score( S, V ):
 	
 	L = 0
+	global idf
 
 	for i in V:
-		for j in S:
-			L += km.calculate_similarity( i, j )
+		for sj in S:
+			L += km.calculate_similarity( V[i], sj, idf )
 
 	return L
 
@@ -34,13 +34,14 @@ def get_diversity_score( S, V, P ):
 	
 	R = 0
 	N = len(V)
+	global idf
 
 	for k in xrange( len(P) ):
 		r = 0;
-		J = [ sent for sent in S if sent in P[k]  ]
+		J = [ sent for sent in S if sent in P[k] ]
 		for j in J:
 			for i in V:
-				r += km.calculate_similarity( i, j, idf )
+				r += km.calculate_similarity( V[i], j, idf )
 		r /= N
 		R += m.sqrt(r)
 
@@ -56,9 +57,18 @@ def compute_score( S, V, newSent, P, lambdaVal ):
 	
 	if newSent in S:
 		return -1;
+	if len(S) == 0:
+		return 0;
 
 	S1 = []
-	S1.append(S)
+	for sent_vec in S:
+		S1.append(sent_vec)
 	S1.append(newSent)
 
 	return get_coverage_score( S1, V ) + lambdaVal * get_diversity_score( S1, V, P )
+
+
+def init(idf_file):
+	global idf
+	idf = p.load( open(idf_file,"rb") )
+
