@@ -1,9 +1,21 @@
+"""
+
+USAGE:
+======
+python calculate_idf.py <path to TEST_docs_Parsed> 
+
+e.g: python calculate_idf.py ../IRE/Project/TEST_docs_Parsed/ 
+
+"""
+
 import os
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 import string
 from stemming.porter2 import stem
 from math import log10
+import sys
+import pickle as p
 
 idf = {}
 docs = 0
@@ -42,12 +54,14 @@ def initialize(files):
 
 
 def main():
-	curdir = './IRE_project/TEST_docs_Parsed/'
+	curdir = sys.argv[1] 	# Path to the "TEST_docs_Parsed" directory
+	idfFile = "idf.out"
 	getfiles(curdir)
 	print docs
 	for term in idf:
 		idf[term] = log10(float(docs)/(1.0 + float(idf[term])))
-	print idf
+
+	p.dump( idf, open(idfFile, "wb+") )
 
 	
 main()
