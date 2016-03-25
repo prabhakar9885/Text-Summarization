@@ -14,6 +14,12 @@ import random
 from operator import add
 
 index = {}
+index2 = {}
+
+def getword(idx):
+	for key, value in index.iteritems():
+		if value == idx:
+			return key
 
 def calculate_similarity(vec1, vec2, idf):
 	numer = 0.0
@@ -21,12 +27,14 @@ def calculate_similarity(vec1, vec2, idf):
 	denom2 = 0.0 
 	
 	for key in vec1:
+		word = index2[key]
 		if key in vec2:
-			numer += (vec1[key]*vec2[key]*idf.values()[key]*idf.values()[key])
-		denom1 += (vec1[key]*vec1[key]*idf.values()[key]*idf.values()[key])
+			numer += (vec1[key]*vec2[key]*idf[word]*idf[word])
+		denom1 += (vec1[key]*vec1[key]*idf[word]*idf[word])
 	
-	for key in vec2:	
-		denom2 += (vec2[key]*vec2[key]*idf.values()[key]*idf.values()[key])
+	for key in vec2:
+		word = index2[key]	
+		denom2 += (vec2[key]*vec2[key]*idf[word]*idf[word])
 	
 	denom1 = denom1**0.5
 	denom2 = denom2**0.5
@@ -67,7 +75,7 @@ def kmeans(docvec, k, idf):
 		r = random.randint(0,len(docvec)-1)
 		if docvec[r] not in centroids:
 			centroids.append(dict(docvec[r]))
-	while iterations != 50:
+	while iterations != 10:
 		iterations += 1
 		for vec in docvec:
 			maxd = -1.0
@@ -105,6 +113,7 @@ def main():
 	idx = 0
 	for term in idf:
 		index[term] = idx
+		index2[idx] = term
 		idx += 1
 	curfile = './IRE_project/TEST_docs_Parsed/d30001t/C1'
 	docvec = createvec(curfile)
