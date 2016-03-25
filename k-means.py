@@ -1,6 +1,8 @@
 """
 Given the path for a specific file in curfile variable, it gives k clusters of sentences.
 Just run the code and it gives k number of clusters.
+clusters contains cluster of sentences in vector(dict) from
+while clusters2 contains cluster of sentences in original form
 """
 
 
@@ -15,6 +17,7 @@ from operator import add
 
 index = {}
 index2 = {}
+sentindex = {}
 
 def getword(idx):
 	for key, value in index.iteritems():
@@ -49,6 +52,7 @@ def createvec(curfile):
 	doc = sent_tokenize(doc)
 	docvec = []
 	for i in xrange(len(doc)):
+		sentindex[i] = doc[i]
 		sent = doc[i]
 		tokens = word_tokenize(sent)
 		stops = stopwords.words('english')
@@ -66,17 +70,22 @@ def createvec(curfile):
 
 def kmeans(docvec, k, idf):
 	centroids = []
-	clusters = []
-	for j in xrange(k):
-		clusters.append([])
+	
 	randints = []
 	iterations = 0
 	while len(centroids) != k:
 		r = random.randint(0,len(docvec)-1)
 		if docvec[r] not in centroids:
 			centroids.append(dict(docvec[r]))
+	
 	while iterations != 10:
 		iterations += 1
+		idx = 0
+		clusters = []
+		clusters2 = []
+		for j in xrange(k):
+			clusters.append([])
+			clusters2.append([])
 		for vec in docvec:
 			maxd = -1.0
 			cent = 0
@@ -86,6 +95,8 @@ def kmeans(docvec, k, idf):
 					maxd = sim
 					cent = i
 			clusters[cent].append(dict(vec))
+			clusters2[cent].append(idx)
+			idx += 1
 
 		for i in xrange(k):
 			temp = {}
@@ -101,7 +112,7 @@ def kmeans(docvec, k, idf):
 				for key in temp:
 					temp[key] = temp[key]/myint	
 				centroids[i] = dict(temp)
-	return clusters
+	return clusters, clusters2
 
 
 
@@ -118,7 +129,12 @@ def main():
 	curfile = './IRE_project/TEST_docs_Parsed/d30001t/C1'
 	docvec = createvec(curfile)
 	k = 4
-	clusters = kmeans(docvec, k, idf)
-	print clusters
+	clusters, clusters2 = kmeans(docvec, k, idf)
+
+	for i in xrange(k):
+		for j in xrange(len(clusters2[i])):
+			clusters2[i][j] = sentindex[clusters2[i][j]]
+	#print clusters
+	#print clusters2
 
 main()
