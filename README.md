@@ -11,7 +11,7 @@
    ```sh
     $ python k_means.py ../TEST_docs_Parsed/d30001t/C1
    ```
-- Senerate summary for the same doc for which clusterming is done
+- Generate summary for the same doc for which clustering is done in previous step
 
    ```sh
     $ python Generate_Summary.py ../TEST_docs_Parsed/d30001t/C1
