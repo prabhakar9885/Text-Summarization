@@ -4,7 +4,7 @@ Just run the code and it gives k number of clusters.
 clusters contains cluster of sentences in vector(dict) from
 while clusters2 contains cluster of sentences in original form
 
-Usage: python k-means.py <path-to-text-file-to-be-summarize>
+Usage: python k-means.py <path-to-text-file-to-be-summarize> <number-of-clusters>
 """
 
 
@@ -125,7 +125,7 @@ def kmeans(docvec, k, idf):
 
 
 
-def main( source, sourceIsFile = True ):
+def main( source, sourceIsFile = True, k = 4 ):
 	idf = p.load( open("idf.out", "rb+") )
 	idx = 0
 	indexFile = "indexForCluster.out"
@@ -137,7 +137,7 @@ def main( source, sourceIsFile = True ):
 		idx += 1
 	p.dump( (index, tokenAtIndex), open(indexFile, "wb+") )
 	docvec = createvec(source, sourceIsFile)
-	k = 4
+	
 	clusters, clusters2 = kmeans(docvec, k, idf)
 
 	for i in xrange(k):
@@ -147,5 +147,5 @@ def main( source, sourceIsFile = True ):
 	p.dump( (clusters,clusters2) , open(clustersFile, "wb+") )
 
 
-if len( sys.argv ) == 2:
-	main( sys.argv[1] )
+if len( sys.argv ) == 3:
+	main( sys.argv[1], int(sys.argv[2]) )
