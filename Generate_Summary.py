@@ -79,8 +79,7 @@ while targetIndex < number_of_clusters:
 	if next_sentnc_in_cluster[targetIndex] == len(clusters2[targetIndex]):
 		del clusters[targetIndex], clusters2[targetIndex], next_sentnc_in_cluster[targetIndex]
 		targetIndex = 0;
-		if sum( [ len(cluster) for cluster in clusters ] ) == 0:
-			clustersAreExhaused = True
+		number_of_clusters = len(clusters)
 	else:
 		i = targetIndex
 		sentence = clusters2[i][ next_sentnc_in_cluster[i] ]	
@@ -100,6 +99,6 @@ for i in summary:
 
 print summaryAsText
 print "Summary Info:"
-print "no. of lines: %d" %len(summary)
-print "no. of chars: %d" %sum([ len(i) for i in summary ])
+print "%d lines of %d" % ( len(summary), len(seed_sentences) )
+print "%d chars" %sum([ len(i) for i in summary ])
 print( "Summary ratio: %.2f" %  (100.0*len(summaryAsText)/len(sentences)) )
