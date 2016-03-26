@@ -41,57 +41,54 @@ next_sentnc_in_cluster = [ 0 for i in xrange(len(clusters)) ]
 
 number_of_clusters = len(clusters)
 i = 0
+non_summary_vecs = []
 while i < number_of_clusters:
 	'''
 	Initializes the score_prev, score, diff
 	'''
-	sentence = clusters2[i][ next_sentnc_in_cluster[i] ]	
+	sentence = clusters2[i][ 0 ]
 	sent_vec = seed_sentences_vecs[sentence]
-	score_prev[i] = score[i]
-	score[i] = cdf.compute_score( summary_vecs, seed_sentences_vecs, sent_vec, clusters, lambdaVal = 1 )
-	diff[i] = score[i] - score_prev[i]
 
-	next_sentnc_in_cluster[i] += 1
-	if next_sentnc_in_cluster[i] == len(clusters[i]):
-		del clusters[i], clusters2[i], next_sentnc_in_cluster[i]
+	non_summary_vecs = []
+	for s in seed_sentences_vecs:
+		if s not in summary_vecs:
+			non_summary_vecs.append( seed_sentences_vecs[s] )
+	if sent_vec in non_summary_vecs:
+		non_summary_vecs.remove(sent_vec)
+
+	f_av = cdf.compute_score( summary_vecs, seed_sentences_vecs, sent_vec, clusters, lambdaVal = 1 )
+	# print f_av
+	f_a = cdf.compute_score( summary_vecs, seed_sentences_vecs, None, clusters, lambdaVal = 1 )
+	# print f_a
+	f_bv = cdf.compute_score( non_summary_vecs, seed_sentences_vecs, sent_vec, clusters, lambdaVal = 1 )
+	# print f_bv
+	f_b = cdf.compute_score( non_summary_vecs, seed_sentences_vecs, None, clusters, lambdaVal = 1 )
+	# print f_b
+
+	if f_av - f_a >= f_bv - f_b:
+		#print "Add: " + str( f_av - f_a - (f_bv - f_b) )
+		summary.append( sentence )
+		summary_vecs.append( sent_vec )
 		number_of_clusters = len(clusters)
-		continue
-	else:
-		i += 1
 
-	if sum( [ len(cluster) for cluster in clusters ] ) == 0:
+	clusters[i].remove( sent_vec )
+	clusters2[i].remove( sentence )
+			
+	j = 0
+	while j < number_of_clusters:
+		if len(clusters[j]) == 0:
+			#print "skip"
+			del clusters[j], clusters2[j]
+			number_of_clusters = len(clusters)
+		else:
+			j += 1
+	
+	i += 1
+	if i == number_of_clusters and number_of_clusters>0:
+		i = 0
+	elif number_of_clusters == 0:
 		break
 
-# targetIndex: Holds the index of the statement that must go into the summary
-targetIndex = 0;
-
-while targetIndex < number_of_clusters:
-	'''
-	Performs the summarization task using sub-modular function
-	'''
-	for i in xrange( 1, len(clusters) ):
-		if diff[targetIndex] < diff[i]:
-			targetIndex = i
-
-	summary.append( clusters2[targetIndex][next_sentnc_in_cluster[targetIndex]] )
-	next_sentnc_in_cluster[targetIndex] += 1
-
-	if next_sentnc_in_cluster[targetIndex] == len(clusters2[targetIndex]):
-		del clusters[targetIndex], clusters2[targetIndex], next_sentnc_in_cluster[targetIndex]
-		targetIndex = 0;
-		number_of_clusters = len(clusters)
-	else:
-		i = targetIndex
-		sentence = clusters2[i][ next_sentnc_in_cluster[i] ]	
-		sent_vec = seed_sentences_vecs[sentence]
-		score_prev[i] = score[i]
-		score[i] = cdf.compute_score( summary_vecs, seed_sentences_vecs, sent_vec, clusters, lambdaVal = 1 )
-		diff[i] = score[i] - score_prev[i]
-		targetIndex = 0
-		continue
-
-	if sum( [ len(cluster) for cluster in clusters ] ) == 0:
-		break
 
 summaryAsText = ""
 for i in summary:
