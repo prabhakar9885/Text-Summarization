@@ -57,13 +57,13 @@ def compute_score( S, V, newSent, P, lambdaVal ):
 	
 	if newSent in S:
 		return -1;
-	if len(S) == 0:
-		return 0;
 
 	S1 = []
 	for sent_vec in S:
 		S1.append(sent_vec)
-	S1.append(newSent)
+
+	if newSent is not None:
+		S1.append(newSent)
 
 	return get_coverage_score( S1, V ) + lambdaVal * get_diversity_score( S1, V, P )
 
