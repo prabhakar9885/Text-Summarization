@@ -1,14 +1,11 @@
 """
-Given the path for a specific file in curfile variable, it gives k clusters of sentences.
-Just run the code and it gives k number of clusters.
+Given the path for a specific directory in curfile variable, it gives k clusters of sentences.
 clusters contains cluster of sentences in vector(dict) from
 while clusters2 contains cluster of sentences in original form
 
-Usage: python k-means.py <path-to-text-file-to-be-summarize> <number-of-clusters>
+Usage: python k_means.py <path-to-directory-of-docs> <number-of-clusters>
+
 """
-
-
-
 from nltk import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 import string
@@ -16,7 +13,7 @@ from stemming.porter2 import stem
 import random
 from operator import add
 import pickle as p
-import sys
+import sys, os
 
 index = {}
 tokenAtIndex = {}
@@ -44,20 +41,27 @@ def calculate_similarity(vec1, vec2, idf):
 	
 	denom1 = denom1**0.5
 	denom2 = denom2**0.5
-	return numer/(denom1*denom2)  
+	return numer/(denom1*denom2)
 
+def getfiles(directory):
+	files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+	for i in xrange(len(files)):
+		files[i] = os.path.join(directory , files[i])
+	return files
 
-
-def createvec(source, sourceisFile=True):
+def createvec(source):
 	global index
-	doc = ""
-	if sourceisFile:
-		fp = open(source, 'r')
-		doc = fp.read()
-	else:
-		doc = source
-	doc = sent_tokenize(doc)
+	doc = []
 	docvec = []
+	
+	files = getfiles(source)
+	for f in files:
+		read_doc = ""
+		fp = open(f, 'r')
+		read_doc = fp.read()
+		read_doc = sent_tokenize(read_doc)
+		doc += read_doc
+	
 	for i in xrange(len(doc)):
 		sentindex[i] = doc[i]
 		sent = doc[i]
@@ -85,7 +89,7 @@ def kmeans(docvec, k, idf):
 		if docvec[r] not in centroids:
 			centroids.append(dict(docvec[r]))
 	
-	while iterations != 10:
+	while iterations != 100:
 		iterations += 1
 		idx = 0
 		clusters = []
@@ -121,11 +125,7 @@ def kmeans(docvec, k, idf):
 				centroids[i] = dict(temp)
 	return clusters, clusters2
 
-
-
-
-
-def main( source, sourceIsFile = True, k = 4 ):
+def main(source, k):
 	idf = p.load( open("idf.out", "rb+") )
 	idx = 0
 	indexFile = "indexForCluster.out"
@@ -136,7 +136,7 @@ def main( source, sourceIsFile = True, k = 4 ):
 		tokenAtIndex[idx] = term
 		idx += 1
 	p.dump( (index, tokenAtIndex), open(indexFile, "wb+") )
-	docvec = createvec(source, sourceIsFile)
+	docvec = createvec(source)
 	
 	clusters, clusters2 = kmeans(docvec, k, idf)
 
@@ -145,6 +145,7 @@ def main( source, sourceIsFile = True, k = 4 ):
 			clusters2[i][j] = sentindex[clusters2[i][j]]
 
 	p.dump( (clusters,clusters2) , open(clustersFile, "wb+") )
+#print clusters2
 
 
 if len( sys.argv ) == 3:

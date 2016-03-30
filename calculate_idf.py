@@ -1,13 +1,11 @@
 """
-
 USAGE:
 ======
 python calculate_idf.py <path to TEST_docs_Parsed> 
 
-e.g: python calculate_idf.py ../IRE/Project/TEST_docs_Parsed/ 
+e.g: python calculate_idf.py ../IRE/Project/TEST_docs_Parsed/d30001t/
 
 """
-
 import os
 from nltk import word_tokenize
 from nltk.corpus import stopwords
@@ -21,14 +19,10 @@ idf = {}
 docs = 0
 
 def getfiles(curdir):
-	dirs = [f for f in os.listdir(curdir)]
-	for direc in dirs:
-		curpath = os.path.join(curdir, direc)
-		files = [f for f in os.listdir(curpath) if os.path.isfile(os.path.join(curpath, f))]
-		for i in xrange(len(files)):
-			files[i] = os.path.join(curpath , files[i])
-		initialize(files)
-
+	files = [f for f in os.listdir(curdir) if os.path.isfile(os.path.join(curdir, f))]
+	for i in xrange(len(files)):
+		files[i] = os.path.join(curdir , files[i])
+	initialize(files)
 
 def initialize(files):
 	global docs
@@ -51,17 +45,14 @@ def initialize(files):
 					idf[token] = 1
 				temp.append(token)
 
-
-
 def main():
 	curdir = sys.argv[1] 	# Path to the "TEST_docs_Parsed" directory
 	idfFile = "idf.out"
 	getfiles(curdir)
-	print docs
+	print "Number of docs in directory:", docs
 	for term in idf:
 		idf[term] = log10(float(docs)/(1.0 + float(idf[term])))
 
 	p.dump( idf, open(idfFile, "wb+") )
-
 	
 main()
