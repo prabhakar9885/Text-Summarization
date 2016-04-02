@@ -49,18 +49,32 @@ def getfiles(directory):
 		files[i] = os.path.join(directory , files[i])
 	return files
 
-def createvec(source):
+def createvec(source, isFileOrDir=True):
 	global index
 	doc = []
 	docvec = []
+	sourceIsFileOrDir = True
 	
-	files = getfiles(source)
-	for f in files:
-		read_doc = ""
-		fp = open(f, 'r')
-		read_doc = fp.read()
-		read_doc = sent_tokenize(read_doc)
+	if isFileOrDir:
+		if os.path.isdir(source):
+			# Source is a directory => Create Docvector for all the sentences present in the docs under that directory
+			files = getfiles(source)
+		elif os.path.isfile(source):
+			# Source is a file => Create DocVector for all the sentences present in the file
+			files = [source]
+	else:
+		# Consider the value of Source for creating the DocVec
+		sourceIsFileOrDir = False
+		read_doc = sent_tokenize(source)
 		doc += read_doc
+	
+	if sourceIsFileOrDir:
+		for f in files:
+			read_doc = ""
+			fp = open(f, 'r')
+			read_doc = fp.read()
+			read_doc = sent_tokenize(read_doc)
+			doc += read_doc
 	
 	for i in xrange(len(doc)):
 		sentindex[i] = doc[i]
