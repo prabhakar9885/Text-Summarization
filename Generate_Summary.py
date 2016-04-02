@@ -24,7 +24,7 @@ def getfiles(directory):
 	return files
 
 
-if len( sys.argv ) != 2:
+if len( sys.argv ) != 3:
 	print "Error: python Generate_Summary.py targetFile"
 	sys.exit(1)
 
