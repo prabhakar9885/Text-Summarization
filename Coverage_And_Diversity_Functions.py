@@ -55,8 +55,8 @@ Returns F(S)
 """
 def compute_score( S, V, newSent, P, lambdaVal ):
 	
-	if newSent in S:
-		return -1;
+	# if newSent in S:
+	# 	return -1;
 
 	S1 = []
 	for sent_vec in S:
