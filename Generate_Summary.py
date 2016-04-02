@@ -1,11 +1,27 @@
+"""
+Generates summary of given documents such that the summary of the documents will be slightly more than W words.
+
+Usage:
+======
+python Generate_Summary <path to the directory containing the documents> <Size of summary in terms of words>
+
+e.g., python Generate_Summary ../asfs/ 100
+"""
+
 
 import Coverage_And_Diversity_Functions as cdf
 import pickle as p
 from nltk import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from stemming.porter2 import stem
-import sys
+import sys, os
 import k_means as km
+
+def getfiles(directory):
+	files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+	for i in xrange(len(files)):
+		files[i] = os.path.join(directory , files[i])
+	return files
 
 
 if len( sys.argv ) != 2:
@@ -18,84 +34,78 @@ clusters, clusters2 = p.load(open("./clusters.out", "rb"))
 km.index, km.tokenAtIndex = p.load( open("./indexForCluster.out", "rb") )
 
 
-sourceFile = sys.argv[1]
-sentences = open( sourceFile, "r" ).read()
-seed_sentences = sent_tokenize(sentences)
+sourceFolder = sys.argv[1]
+summary_size_in_words = sys.argv[2]
+sourceFiles = getfiles(sourceFolder)
+
+
+# Extract sentences from each file in the sourceFolder and add them to seed_sentences
+seed_sentences = []
+for sourceFile in sourceFiles:
+	sentences = open( sourceFile, "r" ).read()
+	sentences = sent_tokenize(sentences)
+	seed_sentences.extend( [sentence for sentence in sentences if sentence not in seed_sentences] )
+
+
+# Build Sentence vector for each sentence and add them to seed_sentences_vecs.
 seed_sentences_vecs = {}
-score = -1
-score_prev = -1
+all_sentence_vecs_without_v = []
+for sentence in seed_sentences:
+	seed_sentences_vecs[sentence] = km.createvec(sentence, isFileOrDir=False)[0]
+	all_sentence_vecs_without_v.append( seed_sentences_vecs[sentence] )
+
+
+current_sent_indx = 0
+count_of_words_in_summary = 0
+non_summary_vecs = []
 summary = []
 summary_vecs = []
 
-for sentence in seed_sentences:
-	if sentence not in seed_sentences_vecs:
-		seed_sentences_vecs[sentence] = km.createvec(sentence, False)[0]
+while count_of_words_in_summary < summary_size_in_words and len(seed_sentences) != 0:
 
-score_prev = [ 0 for i in xrange(len(clusters)) ]
-score = [ 0 for i in xrange(len(clusters)) ]
-# diff: Holds the difference between the previous score and the current score for each cluster
-diff = [ 0 for i in xrange(len(clusters)) ]
-# next_sentnc_in_cluster: Holds the index of the next statement from each cluster that must be considered for building sumary
-next_sentnc_in_cluster = [ 0 for i in xrange(len(clusters)) ]
+	print "Summary till now: %d" % count_of_words_in_summary
+	print( "Processing sentences: " )
+	max_profit_at_indx = 0
+	max_profit_till_now = -1
+	number_of_seed_sentences_vecs = len(seed_sentences_vecs)
+	for i in xrange( number_of_seed_sentences_vecs ):
+		sent = seed_sentences[i]
+		v = seed_sentences_vecs[ sent ]
+		all_sentence_vecs_without_v.remove( v )
 
+		f_av = cdf.compute_score( summary_vecs, seed_sentences_vecs, v, \
+																			clusters, lambdaVal = 1 )
+		f_a = cdf.compute_score( summary_vecs, seed_sentences_vecs, None, 
+																			clusters, lambdaVal = 1 )
+		f_bv = cdf.compute_score( all_sentence_vecs_without_v, seed_sentences_vecs, v, 
+																			clusters, lambdaVal = 1 )
+		f_b = cdf.compute_score( all_sentence_vecs_without_v, seed_sentences_vecs, None, 
+																			clusters, lambdaVal = 1 )
+		all_sentence_vecs_without_v.append( v )
 
-number_of_clusters = len(clusters)
-i = 0
-non_summary_vecs = []
-while i < number_of_clusters:
-	'''
-	Initializes the score_prev, score, diff
-	'''
-	sentence = clusters2[i][ 0 ]
-	sent_vec = seed_sentences_vecs[sentence]
+		if f_av - f_a >= f_bv - f_b or max_profit_till_now == -1:
+			profit = f_av - f_a;
+			if profit > max_profit_till_now:
+				max_profit_till_now = profit
+				max_profit_at_indx = i
+		print( "Senntence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
 
-	non_summary_vecs = []
-	for s in seed_sentences_vecs:
-		if s not in summary_vecs:
-			non_summary_vecs.append( seed_sentences_vecs[s] )
-	if sent_vec in non_summary_vecs:
-		non_summary_vecs.remove(sent_vec)
+	sentence_with_max_profit = seed_sentences[max_profit_at_indx]
+	count_of_words_in_summary += \
+				len( [ i for i in sentence_with_max_profit.split(" ") if len(i.strip())!=0 ] )
 
-	f_av = cdf.compute_score( summary_vecs, seed_sentences_vecs, sent_vec, clusters, lambdaVal = 1 )
-	# print f_av
-	f_a = cdf.compute_score( summary_vecs, seed_sentences_vecs, None, clusters, lambdaVal = 1 )
-	# print f_a
-	f_bv = cdf.compute_score( non_summary_vecs, seed_sentences_vecs, sent_vec, clusters, lambdaVal = 1 )
-	# print f_bv
-	f_b = cdf.compute_score( non_summary_vecs, seed_sentences_vecs, None, clusters, lambdaVal = 1 )
-	# print f_b
-
-	if f_av - f_a >= f_bv - f_b:
-		#print "Add: " + str( f_av - f_a - (f_bv - f_b) )
-		summary.append( sentence )
-		summary_vecs.append( sent_vec )
-		number_of_clusters = len(clusters)
-
-	clusters[i].remove( sent_vec )
-	clusters2[i].remove( sentence )
-			
-	j = 0
-	while j < number_of_clusters:
-		if len(clusters[j]) == 0:
-			#print "skip"
-			del clusters[j], clusters2[j]
-			number_of_clusters = len(clusters)
-		else:
-			j += 1
+	summary.append( sentence_with_max_profit )
+	summary_vecs.append( seed_sentences_vecs[sentence_with_max_profit] )
 	
-	i += 1
-	if i == number_of_clusters and number_of_clusters>0:
-		i = 0
-	elif number_of_clusters == 0:
-		break
+	seed_sentences.remove( sentence_with_max_profit )
+	del seed_sentences_vecs[ sentence_with_max_profit ]
+
 
 
 summaryAsText = ""
 for i in summary:
 	summaryAsText += i.strip();
 
-print summaryAsText
-print "Summary Info:"
-print "%d lines of %d" % ( len(summary), len(seed_sentences) )
-print "%d chars" %sum([ len(i) for i in summary ])
-print( "Summary ratio: %.2f" %  (100.0*len(summaryAsText)/len(sentences)) )
+out_file = open( sourceFolder + ".summary", "r" )
+out_file.write(summary_vecs)
+out_file.close()
