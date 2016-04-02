@@ -1,7 +1,7 @@
 """
 USAGE:
 ======
-python calculate_idf.py <path to TEST_docs_Parsed> 
+python calculate_idf.py <path to folder containing the docs that are to be summarized> 
 
 e.g: python calculate_idf.py ../IRE/Project/TEST_docs_Parsed/d30001t/
 
@@ -27,8 +27,11 @@ def getfiles(curdir):
 def initialize(files):
 	global docs
 	global idf
+	countOfDocs = len(files)
+	print "Number of docs in directory:", countOfDocs
 	for f in files:
 		docs += 1
+		print "Processing doc %d of %d" %(docs, countOfDocs)
 		fp = open(f, 'r')
 		document = fp.read()
 		document = word_tokenize(document)
@@ -49,7 +52,6 @@ def main():
 	curdir = sys.argv[1] 	# Path to the "TEST_docs_Parsed" directory
 	idfFile = "idf.out"
 	getfiles(curdir)
-	print "Number of docs in directory:", docs
 	for term in idf:
 		idf[term] = log10(float(docs)/(1.0 + float(idf[term])))
 
