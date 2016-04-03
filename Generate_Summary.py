@@ -3,19 +3,22 @@ Generates summary of given documents such that the summary of the documents will
 
 Usage:
 ======
-python Generate_Summary <path to the directory containing the documents> <Size of summary in terms of words>
+python Generate_Summary <path to the directory containing the documents> <Size of summary in terms of words> [<DEBUG>]
 
 e.g., python Generate_Summary ../asfs/ 100
 """
 
+print "Loading libs..."
 
 import Coverage_And_Diversity_Functions as cdf
 import pickle as p
 from nltk import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from stemming.porter2 import stem
-import sys, os
+import sys, os, time
 import k_means as km
+
+print "Loading data..."
 
 def getfiles(directory):
 	files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
@@ -24,9 +27,15 @@ def getfiles(directory):
 	return files
 
 
-if len( sys.argv ) != 3:
+if len( sys.argv ) != 3 and len( sys.argv ) != 4:
 	print "Error: python Generate_Summary.py targetFile"
 	sys.exit(1)
+
+
+DEBUG = False
+if len( sys.argv ) == 4:
+	DEBUG = True
+
 
 cdf.init( idf_file = "idf.out" )
 
@@ -61,6 +70,10 @@ non_summary_vecs = []
 summary = []
 summary_vecs = []
 
+
+print "Generating Summary"
+st = time.time()
+
 while count_of_words_in_summary < summary_size_in_words and len(seed_sentences) != 0:
 
 	print "Summary till now: %d" % count_of_words_in_summary
@@ -68,6 +81,8 @@ while count_of_words_in_summary < summary_size_in_words and len(seed_sentences) 
 	max_profit_at_indx = 0
 	max_profit_till_now = -1
 	number_of_seed_sentences_vecs = len(seed_sentences_vecs)
+	print "Total number of statements: %d" % ( number_of_seed_sentences_vecs )
+
 	for i in xrange( number_of_seed_sentences_vecs ):
 		sent = seed_sentences[i]
 		v = seed_sentences_vecs[ sent ]
@@ -88,7 +103,12 @@ while count_of_words_in_summary < summary_size_in_words and len(seed_sentences) 
 			if profit > max_profit_till_now:
 				max_profit_till_now = profit
 				max_profit_at_indx = i
-		print( "Senntence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
+
+		if DEBUG:
+			print( "Senntence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
+		else:
+			sys.stdout.write( str(i)+", " )
+			sys.stdout.flush()
 
 	sentence_with_max_profit = seed_sentences[max_profit_at_indx]
 	count_of_words_in_summary += \
@@ -99,13 +119,21 @@ while count_of_words_in_summary < summary_size_in_words and len(seed_sentences) 
 	
 	seed_sentences.remove( sentence_with_max_profit )
 	del seed_sentences_vecs[ sentence_with_max_profit ]
+	
+	if DEBUG:
+		break
+
+et = time.time()
+print "Run-time: %s" %(et-st)
 
 
+if DEBUG:
+	print Summary
+else:
+	summaryAsText = ""
+	for i in summary:
+		summaryAsText += i.strip();
 
-summaryAsText = ""
-for i in summary:
-	summaryAsText += i.strip();
-
-out_file = open( sourceFolder + ".summary", "r" )
-out_file.write(summary_vecs)
-out_file.close()
+	out_file = open( sourceFolder + ".summary", "r" )
+	out_file.write(summary_vecs)
+	out_file.close()
