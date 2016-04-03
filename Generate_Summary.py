@@ -3,7 +3,7 @@ Generates summary of given documents such that the summary of the documents will
 
 Usage:
 ======
-python Generate_Summary <path to the directory containing the documents> <Size of summary in terms of words>
+python Generate_Summary <path to the directory containing the documents> <Size of summary in terms of words> [<pass arg to enable DEBUG mode>]
 
 e.g., python Generate_Summary ../asfs/ 100
 """
@@ -38,7 +38,7 @@ class GetSentenceScore(threading.Thread):
 
 
 	def run(self):
-		global seed_sentences_vecs, seed_sentences, all_sentence_vecs_without_v
+		global seed_sentences_vecs, seed_sentences, all_sentence_vecs_without_v, DEBUG_MODE_ENABLED
 		all_sentence_vecs_without_v_local = copy.deepcopy(all_sentence_vecs_without_v)
 
 		for i in xrange( self.start_index, self.end_index ):
@@ -61,14 +61,23 @@ class GetSentenceScore(threading.Thread):
 				if profit > self.max_profit_till_now:
 					self.max_profit_till_now = profit
 					self.max_profit_at_indx = i
-			print( self.threadName + ": Sentence Index: " + str(i) + "; Profit: " +\
-						 str(self.max_profit_till_now) )
+
+			if DEBUG_MODE_ENABLED:
+				print( self.threadName + ": Sentence Index: " + str(i) + "; Profit: " +\
+							 str(self.max_profit_till_now) )
 
 
 
-if len( sys.argv ) != 3:
+
+if len( sys.argv ) != 3 and len( sys.argv ) != 4:
 	print "Error: python Generate_Summary.py targetFile"
 	sys.exit(1)
+
+DEBUG_MODE_ENABLED = False
+if len( sys.argv ) == 4:
+	print  "DEBUG MODE ENABLED"
+	DEBUG_MODE_ENABLED = True
+
 
 cdf.init( idf_file = "idf.out" )
 
@@ -148,24 +157,29 @@ while count_of_words_in_summary < summary_size_in_words and len(seed_sentences) 
 	seed_sentences.remove( sentence_with_max_profit )
 	del seed_sentences_vecs[ sentence_with_max_profit ]
 
-	break
+	if DEBUG_MODE_ENABLED:
+		break
 
-end_time = start_time = time.time()
+end_time = time.time()
 
 print "Time-elapsed: %s" % (end_time - start_time)
-print summary
 
-#
-#	Save the summary to a file
-#
-# summaryAsText = ""
-# for i in summary:
-# 	summaryAsText += i.strip()+"\n";
+if DEBUG_MODE_ENABLED:
+	print summary
 
-# if sourceFolder[-1]=='/':
-# 	sourceFolder = sourceFolder[:-1]
-# sourceFolder = sourceFolder.split("/")[-1]
 
-# out_file = open( sourceFolder + ".summary", "w+" )
-# out_file.write(summaryAsText)
-# out_file.close()
+if not DEBUG_MODE_ENABLED:
+	#
+	#	 Save the summary to a file
+	#
+	summaryAsText = ""
+	for i in summary:
+		summaryAsText += i.strip()+"\n";
+
+	if sourceFolder[-1]=='/':
+		sourceFolder = sourceFolder[:-1]
+	sourceFolder = sourceFolder.split("/")[-1]
+
+	out_file = open( sourceFolder + ".summary", "w+" )
+	out_file.write(summaryAsText)
+	out_file.close()
