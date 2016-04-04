@@ -59,9 +59,14 @@ for sourceFile in sourceFiles:
 # Build Sentence vector for each sentence and add them to seed_sentences_vecs.
 seed_sentences_vecs = {}
 all_sentence_vecs_without_v = []
+shortest_sent_size = -1
 for sentence in seed_sentences:
 	seed_sentences_vecs[sentence] = km.createvec(sentence, isFileOrDir=False)[0]
 	all_sentence_vecs_without_v.append( seed_sentences_vecs[sentence] )
+	if seed_sentences_vecs[sentence] == -1:
+		shortest_sent_size = len( seed_sentences_vecs[sentence] )
+	elif shortest_sent_size > len( seed_sentences_vecs[sentence] ):
+		shortest_sent_size = seed_sentences_vecs[sentence]
 
 
 current_sent_indx = 0
@@ -73,8 +78,11 @@ summary_vecs = []
 
 print "Generating Summary"
 st = time.time()
+char_count = 0
 
-while count_of_words_in_summary < summary_size_in_words and len(seed_sentences) != 0:
+# while count_of_words_in_summary < summary_size_in_words and len(seed_sentences) != 0:
+while char_count + shortest_sent_size <= 655 and len(seed_sentences) != 0:
+
 
 	print "Summary till now: %d" % count_of_words_in_summary
 	print( "Processing sentences: " )
