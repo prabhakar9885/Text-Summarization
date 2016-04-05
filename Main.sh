@@ -13,7 +13,7 @@
 
 dirName="$1"
 noOfClusters="$2"
-summarySize="$3"
+summarySize=655
 
 if [[ -d "$dirName" ]]; then
 	echo -n "Generating tfid scores..."
