@@ -44,7 +44,7 @@ sourceFiles = getfiles(sourceFolder)
 summary_size_in_words = 655
 if len( sys.argv ) == 3:
 	summary_size_in_words = int(sys.argv[2])
-print summary_size_in_words
+print "Max. summary size: %d" %summary_size_in_words
 
 
 
@@ -63,10 +63,11 @@ shortest_sent_size = -1
 for sentence in seed_sentences:
 	seed_sentences_vecs[sentence] = km.createvec(sentence, isFileOrDir=False)[0]
 	all_sentence_vecs_without_v.append( seed_sentences_vecs[sentence] )
+	word_count = len(sentence.split(" "))
 	if seed_sentences_vecs[sentence] == -1:
-		shortest_sent_size = len( seed_sentences_vecs[sentence] )
-	elif shortest_sent_size > len( seed_sentences_vecs[sentence] ):
-		shortest_sent_size = seed_sentences_vecs[sentence]
+		shortest_sent_size = word_count
+	elif shortest_sent_size > word_count:
+		shortest_sent_size = word_count
 
 
 current_sent_indx = 0
@@ -78,12 +79,10 @@ summary_vecs = []
 
 print "Generating Summary"
 st = time.time()
-char_count = 0
 
 
 
-while char_count + shortest_sent_size <= summary_size_in_words and len(seed_sentences) != 0:
-
+while count_of_words_in_summary + shortest_sent_size <= summary_size_in_words and len(seed_sentences) != 0:
 
 	print "Summary till now: %d" % count_of_words_in_summary
 	print( "Processing sentences: " )
@@ -113,7 +112,7 @@ while char_count + shortest_sent_size <= summary_size_in_words and len(seed_sent
 				max_profit_till_now = profit
 				max_profit_at_indx = i
 
-		print( "Senntence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
+		print( "Sentence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
 
 	sentence_with_max_profit = seed_sentences[max_profit_at_indx]
 	count_of_words_in_summary += \
