@@ -22,7 +22,7 @@ if [[ -d "$dirName" ]]; then
 	echo -n "Generating Clusters..."
 	python k_means.py "$dirName" "$noOfClusters" > /dev/null
 	echo "done"
-	echo -n "Generating Clusters..."
+	echo -n "Generating Summary..."
 	python Generate_Summary.py "$dirName" "$summarySize"> "$dirName.summary"
 	echo "done"
 else
