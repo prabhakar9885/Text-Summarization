@@ -44,6 +44,7 @@ sourceFiles = getfiles(sourceFolder)
 summary_size_in_words = 655
 if len( sys.argv ) == 3:
 	summary_size_in_words = int(sys.argv[2])
+print summary_size_in_words
 
 
 
