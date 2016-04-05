@@ -132,9 +132,10 @@ summaryAsText = ""
 for i in summary:
 	summaryAsText += i.strip();
 
+print "Summary"
+print summaryAsText
+print "Saving summary to " + sourceFolder
+
 out_file = open( sourceFolder + ".summary", "r" )
 out_file.write(summary_vecs)
 out_file.close()
-
-print "Summary"
-print summaryAsText
