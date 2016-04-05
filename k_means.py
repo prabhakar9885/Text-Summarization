@@ -162,5 +162,5 @@ def main(source, k):
 #print clusters2
 
 
-if len( sys.argv ) == 3:
+if __name__ == "__main__":
 	main( sys.argv[1], int(sys.argv[2]) )
