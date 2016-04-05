@@ -3,9 +3,9 @@ Generates summary of given documents such that the summary of the documents will
 
 Usage:
 ======
-python Generate_Summary <path to the directory containing the documents> <Size of summary in terms of words> [<DEBUG>]
+python Generate_Summary <path to the directory containing the documents> [<Size of summary in terms of words>]
 
-e.g., python Generate_Summary ../asfs/ 100
+e.g., python Generate_Summary ../asfs/ 
 """
 
 print "Loading libs..."
@@ -27,14 +27,9 @@ def getfiles(directory):
 	return files
 
 
-if len( sys.argv ) != 3 and len( sys.argv ) != 4:
-	print "Error: python Generate_Summary.py targetFile"
+if len( sys.argv ) != 3 and len( sys.argv ) != 2:
+	print "Error: Args Error"
 	sys.exit(1)
-
-
-DEBUG = False
-if len( sys.argv ) == 4:
-	DEBUG = True
 
 
 cdf.init( idf_file = "idf.out" )
@@ -44,8 +39,12 @@ km.index, km.tokenAtIndex = p.load( open("./indexForCluster.out", "rb") )
 
 
 sourceFolder = sys.argv[1]
-summary_size_in_words = sys.argv[2]
 sourceFiles = getfiles(sourceFolder)
+
+summary_size_in_words = 655
+if len( sys.argv ) == 3:
+	summary_size_in_words = int(sys.argv[2])
+
 
 
 # Extract sentences from each file in the sourceFolder and add them to seed_sentences
@@ -80,8 +79,9 @@ print "Generating Summary"
 st = time.time()
 char_count = 0
 
-# while count_of_words_in_summary < summary_size_in_words and len(seed_sentences) != 0:
-while char_count + shortest_sent_size <= 655 and len(seed_sentences) != 0:
+
+
+while char_count + shortest_sent_size <= summary_size_in_words and len(seed_sentences) != 0:
 
 
 	print "Summary till now: %d" % count_of_words_in_summary
@@ -112,11 +112,7 @@ while char_count + shortest_sent_size <= 655 and len(seed_sentences) != 0:
 				max_profit_till_now = profit
 				max_profit_at_indx = i
 
-		if DEBUG:
-			print( "Senntence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
-		else:
-			sys.stdout.write( str(i)+", " )
-			sys.stdout.flush()
+		print( "Senntence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
 
 	sentence_with_max_profit = seed_sentences[max_profit_at_indx]
 	count_of_words_in_summary += \
@@ -127,21 +123,18 @@ while char_count + shortest_sent_size <= 655 and len(seed_sentences) != 0:
 	
 	seed_sentences.remove( sentence_with_max_profit )
 	del seed_sentences_vecs[ sentence_with_max_profit ]
-	
-	if DEBUG:
-		break
 
 et = time.time()
 print "Run-time: %s" %(et-st)
 
 
-if DEBUG:
-	print Summary
-else:
-	summaryAsText = ""
-	for i in summary:
-		summaryAsText += i.strip();
+summaryAsText = ""
+for i in summary:
+	summaryAsText += i.strip();
 
-	out_file = open( sourceFolder + ".summary", "r" )
-	out_file.write(summary_vecs)
-	out_file.close()
+out_file = open( sourceFolder + ".summary", "r" )
+out_file.write(summary_vecs)
+out_file.close()
+
+print "Summary"
+print summaryAsText
