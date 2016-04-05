@@ -23,7 +23,7 @@ if [[ -d "$dirName" ]]; then
 	python k_means.py "$dirName" "$noOfClusters" > /dev/null
 	echo "done"
 	echo -n "Generating Summary..."
-	python Generate_Summary.py "$dirName" "$summarySize"> "$dirName.summary"
+	python Generate_Summary.py "$dirName" "$summarySize"
 	echo "done"
 else
 	echo "Director not found: $dirName"
