@@ -82,7 +82,7 @@ st = time.time()
 
 
 
-while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes:
+while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes :
 
 	print "Summary till now: %d bytes" % count_of_bytes_in_summary
 	print( "Processing sentences: " )
@@ -108,7 +108,7 @@ while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes:
 				max_profit_till_now = profit
 				max_profit_at_indx = i
 
-		print( "Sentence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
+		# print( "Sentence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
 
 	sentence_with_max_profit = seed_sentences[max_profit_at_indx]
 	count_of_bytes_in_summary += len(sentence_with_max_profit.strip())
