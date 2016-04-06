@@ -82,7 +82,7 @@ st = time.time()
 
 
 
-while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes :
+while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes and len(seed_sentences) != 0:
 
 	print "Summary till now: %d bytes" % count_of_bytes_in_summary
 	print( "Processing sentences: " )
@@ -116,6 +116,9 @@ while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes :
 
 	summary.append( sentence_with_max_profit )
 	summary_vecs.append( seed_sentences_vecs[sentence_with_max_profit] )
+
+	seed_sentences.remove( sentence_with_max_profit )
+	del seed_sentences_vecs[ sentence_with_max_profit ]
 	
 
 et = time.time()
