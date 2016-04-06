@@ -134,5 +134,5 @@ print summaryAsText
 print "Saving summary to " + sourceFolder
 
 out_file = open( sourceFolder + ".summary", "w+" )
-out_file.write(summary_vecs)
+out_file.write(summary)
 out_file.close()
