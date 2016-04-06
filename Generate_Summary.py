@@ -5,7 +5,7 @@ Usage:
 ======
 python Generate_Summary <path to the directory containing the documents> [<Size of summary in terms of words>]
 
-e.g., python Generate_Summary ../asfs/ 
+e.g., python Generate_Summary ../asfs 
 """
 
 print "Loading libs..."
@@ -41,10 +41,10 @@ km.index, km.tokenAtIndex = p.load( open("./indexForCluster.out", "rb") )
 sourceFolder = sys.argv[1]
 sourceFiles = getfiles(sourceFolder)
 
-summary_size_in_words = 655
+summary_size_in_bytes = 655
 if len( sys.argv ) == 3:
-	summary_size_in_words = int(sys.argv[2])
-print "Max. summary size: %d" %summary_size_in_words
+	summary_size_in_bytes = int(sys.argv[2])
+print "Max. summary size: %d bytes" %summary_size_in_bytes
 
 
 
@@ -63,15 +63,15 @@ shortest_sent_size = -1
 for sentence in seed_sentences:
 	seed_sentences_vecs[sentence] = km.createvec(sentence, isFileOrDir=False)[0]
 	all_sentence_vecs_without_v.append( seed_sentences_vecs[sentence] )
-	word_count = len(sentence.split(" "))
+	byte_count = len(sentence.strip())
 	if seed_sentences_vecs[sentence] == -1:
-		shortest_sent_size = word_count
-	elif shortest_sent_size > word_count:
-		shortest_sent_size = word_count
+		shortest_sent_size = byte_count
+	elif shortest_sent_size > byte_count:
+		shortest_sent_size = byte_count
 
 
 current_sent_indx = 0
-count_of_words_in_summary = 0
+count_of_bytes_in_summary = 0
 non_summary_vecs = []
 summary = []
 summary_vecs = []
@@ -82,9 +82,9 @@ st = time.time()
 
 
 
-while count_of_words_in_summary + shortest_sent_size <= summary_size_in_words and len(seed_sentences) != 0:
+while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes and len(seed_sentences) != 0:
 
-	print "Summary till now: %d" % count_of_words_in_summary
+	print "Summary till now: %d bytes" % count_of_bytes_in_summary
 	print( "Processing sentences: " )
 	max_profit_at_indx = 0
 	max_profit_till_now = -1
@@ -107,6 +107,7 @@ while count_of_words_in_summary + shortest_sent_size <= summary_size_in_words an
 		all_sentence_vecs_without_v.append( v )
 
 		if f_av - f_a >= f_bv - f_b or max_profit_till_now == -1:
+		# if f_av - f_a >= 0 or max_profit_till_now == -1:
 			profit = f_av - f_a;
 			if profit > max_profit_till_now:
 				max_profit_till_now = profit
@@ -115,14 +116,12 @@ while count_of_words_in_summary + shortest_sent_size <= summary_size_in_words an
 		print( "Sentence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
 
 	sentence_with_max_profit = seed_sentences[max_profit_at_indx]
-	count_of_words_in_summary += \
-				len( [ i for i in sentence_with_max_profit.split(" ") if len(i.strip())!=0 ] )
+	count_of_bytes_in_summary += len(sentence_with_max_profit.strip())
+				
 
 	summary.append( sentence_with_max_profit )
 	summary_vecs.append( seed_sentences_vecs[sentence_with_max_profit] )
 	
-	seed_sentences.remove( sentence_with_max_profit )
-	del seed_sentences_vecs[ sentence_with_max_profit ]
 
 et = time.time()
 print "Run-time: %s" %(et-st)
