@@ -114,6 +114,7 @@ while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes an
 				max_profit_at_indx = i
 
 		print( "Sentence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
+		
 
 	sentence_with_max_profit = seed_sentences[max_profit_at_indx]
 	count_of_bytes_in_summary += len(sentence_with_max_profit.strip())
@@ -121,6 +122,9 @@ while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes an
 
 	summary.append( sentence_with_max_profit )
 	summary_vecs.append( seed_sentences_vecs[sentence_with_max_profit] )
+
+	seed_sentences.remove( sentence_with_max_profit )
+	del seed_sentences_vecs[ sentence_with_max_profit ]
 	
 
 et = time.time()
@@ -136,5 +140,5 @@ print summaryAsText
 print "Saving summary to " + sourceFolder
 
 out_file = open( sourceFolder + ".summary", "w+" )
-out_file.write(summary_vecs)
+out_file.write(summaryAsText)
 out_file.close()
