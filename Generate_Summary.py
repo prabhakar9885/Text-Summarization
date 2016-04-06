@@ -100,19 +100,14 @@ while count_of_words_in_summary + shortest_sent_size <= summary_size_in_words an
 																			clusters, lambdaVal = 1 )
 		f_a = cdf.compute_score( summary_vecs, seed_sentences_vecs, None, 
 																			clusters, lambdaVal = 1 )
-		f_bv = cdf.compute_score( all_sentence_vecs_without_v, seed_sentences_vecs, v, 
-																			clusters, lambdaVal = 1 )
-		f_b = cdf.compute_score( all_sentence_vecs_without_v, seed_sentences_vecs, None, 
-																			clusters, lambdaVal = 1 )
 		all_sentence_vecs_without_v.append( v )
 
-		if f_av - f_a >= f_bv - f_b or max_profit_till_now == -1:
+		if f_av - f_a >= 0 or max_profit_till_now == -1:
 			profit = f_av - f_a;
 			if profit > max_profit_till_now:
 				max_profit_till_now = profit
 				max_profit_at_indx = i
 
-		print( "Sentence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
 
 	sentence_with_max_profit = seed_sentences[max_profit_at_indx]
 	count_of_words_in_summary += \
