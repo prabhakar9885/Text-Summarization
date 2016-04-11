@@ -90,6 +90,7 @@ while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes an
 	max_profit_till_now = -1
 	number_of_seed_sentences_vecs = len(seed_sentences_vecs)
 	print "Total number of statements: %d" % ( number_of_seed_sentences_vecs )
+	profit = -1
 
 	for i in xrange( number_of_seed_sentences_vecs ):
 		sent = seed_sentences[i]
@@ -102,7 +103,8 @@ while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes an
 																			clusters, lambdaVal = 1 )
 		all_sentence_vecs_without_v.append( v )
 
-		if f_av - f_a >= 0 or max_profit_till_now == -1:
+		if (f_av - f_a >= 0 or max_profit_till_now == -1) \
+			and count_of_bytes_in_summary + len(sent) <= summary_size_in_bytes:
 			profit = f_av - f_a;
 			if profit > max_profit_till_now:
 				max_profit_till_now = profit
@@ -110,6 +112,9 @@ while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes an
 
 		# print( "Sentence Index: " + str(i) + "; Profit: " + str(max_profit_till_now) )
 
+	if profit == -1:
+		break;
+		
 	sentence_with_max_profit = seed_sentences[max_profit_at_indx]
 	count_of_bytes_in_summary += len(sentence_with_max_profit.strip())
 				
