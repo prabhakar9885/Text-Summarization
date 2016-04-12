@@ -12,18 +12,18 @@
 #!/bin/bash
 
 dirName="$1"
-noOfClusters="$2"
+clusteringAlgo="$2"
 summarySize=655
 
 if [[ -d "$dirName" ]]; then
-	echo -n "Generating tfid scores..."
+	echo -n "Generating tf-idf scores..."
 	python calculate_idf.py "$dirName" > /dev/null
 	echo "done"
 	echo -n "Generating Clusters..."
-	python k_means.py "$dirName" "$noOfClusters" > /dev/null
+	python clustering.py "$dirName" "$clusteringAlgo" > /dev/null
 	echo "done"
 	echo -n "Generating Summary..."
-	python Generate_Summary.py "$dirName" "$summarySize"
+	python Generate_Summary.py "$dirName"
 	echo "done"
 else
 	echo "Director not found: $dirName"

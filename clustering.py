@@ -14,27 +14,29 @@ import random
 from operator import add
 import pickle as p
 import sys, os
+import graph_builder
+import cw
 
 index = {}
 tokenAtIndex = {}
 sentindex = {}
+vecindex = {}
 
 def getword(idx):
 	for key, value in index.iteritems():
 		if value == idx:
 			return key
 
-def calculate_similarity(vec1, vec2, idf):
+def calculate_similarity(vec1, vec2, idf, tokenAtIndex):
 	numer = 0.0
 	denom1 = 0.0
 	denom2 = 0.0 
-	
 	for key in vec1:
 		word = tokenAtIndex[key]
 		if key in vec2:
 			numer += (vec1[key]*vec2[key]*idf[word]*idf[word])
 		denom1 += (vec1[key]*vec1[key]*idf[word]*idf[word])
-	
+
 	for key in vec2:
 		word = tokenAtIndex[key]	
 		denom2 += (vec2[key]*vec2[key]*idf[word]*idf[word])
@@ -90,7 +92,9 @@ def createvec(source, isFileOrDir=True):
 				temp[index[token]] += 1.0
 			else:
 				temp[index[token]] = 1.0
+
 		docvec.append(dict(temp))
+		vecindex[i] = dict(temp)
 	return docvec
 
 def kmeans(docvec, k, idf):
@@ -115,7 +119,7 @@ def kmeans(docvec, k, idf):
 			maxd = -1.0
 			cent = 0
 			for i in xrange(k):
-				sim = calculate_similarity(vec, centroids[i], idf)
+				sim = calculate_similarity(vec, centroids[i], idf, tokenAtIndex)
 				if sim > maxd:
 					maxd = sim
 					cent = i
@@ -139,7 +143,7 @@ def kmeans(docvec, k, idf):
 				centroids[i] = dict(temp)
 	return clusters, clusters2
 
-def main(source, k):
+def main(source, number):
 	idf = p.load( open("idf.out", "rb+") )
 	idx = 0
 	indexFile = "indexForCluster.out"
@@ -149,16 +153,24 @@ def main(source, k):
 		index[term] = idx
 		tokenAtIndex[idx] = term
 		idx += 1
-	p.dump( (index, tokenAtIndex), open(indexFile, "wb+") )
 	docvec = createvec(source)
+	p.dump( (docvec, index, tokenAtIndex, sentindex, vecindex), open(indexFile, "wb+") )
+
+	if number == 1:
+		#no_of_clusters = k
+		k = 4
+		clusters, clusters2 = kmeans(docvec, k, idf)
+		for i in xrange(k):
+			for j in xrange(len(clusters2[i])):
+				clusters2[i][j] = sentindex[clusters2[i][j]]
+
+
+	elif number == 2:
+		graph_builder.build(vecindex, idf, tokenAtIndex)
+		clusters = cw.main()
+		clusters2 = {}
 	
-	clusters, clusters2 = kmeans(docvec, k, idf)
-
-	for i in xrange(k):
-		for j in xrange(len(clusters2[i])):
-			clusters2[i][j] = sentindex[clusters2[i][j]]
-
-	p.dump( (clusters,clusters2) , open(clustersFile, "wb+") )
+	p.dump( (clusters, clusters2) , open(clustersFile, "wb+") )
 #print clusters2
 
 
