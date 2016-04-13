@@ -14,14 +14,14 @@
    $ bash bash Main.sh ../TEST_docs_Parsed/d30001t/ 3 4
    ```
 
-For more information check [README.pdf]
+- **Compute ROUG Score**:
+  ```sh
+   $ java -cp C_Rouge/C_ROUGE7.jar executiverouge.C_ROUGE7 SysGeneratedSummary.txt  TestData/Test_Summaries/d30001t  1 A R
+   ```
+   Refer [ROUG Score computation](./C_Rouge/ReadMe)
+   
 
 
 ### Assumptions made:
+- For more information refer [A class of submodular functions for document summarization](http://dl.acm.org/citation.cfm?id=2002537)
 - In page 7, equation(6), alpha is taken as 1
-
-
-
-
-bash Main.sh ../TEST_docs_Parsed/d30024t 3
-java -cp ../C_Rouge/C_ROUGE7.jar executiverouge.C_ROUGE7 "Byte based Summary/d30007t.summary"  ../Test_Summaries/d30007t/  1 A R
