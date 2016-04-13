@@ -22,7 +22,7 @@ def getfiles(curdir):
 	files = [f for f in os.listdir(curdir) if os.path.isfile(os.path.join(curdir, f))]
 	for i in xrange(len(files)):
 		files[i] = os.path.join(curdir , files[i])
-	initialize(files)
+	return files
 
 def initialize(files):
 	global docs
@@ -51,7 +51,8 @@ def initialize(files):
 def main():
 	curdir = sys.argv[1] 	# Path to the "TEST_docs_Parsed" directory
 	idfFile = "idf.out"
-	getfiles(curdir)
+	files = getfiles(curdir)
+	initialize(files)
 	for term in idf:
 		idf[term] = log10(float(docs)/(1.0 + float(idf[term])))
 
