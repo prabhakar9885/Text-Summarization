@@ -155,15 +155,15 @@ def Create_Hierarical_Clusters( docvec, cluster_count ):
 	Z = linkage(X, 'ward')
 	clusters = fcluster( Z, 3, criterion='maxclust') # Clustering criteria: Max_Num_of_clusters=3
 
-	dendrogram(
-	    Z,
-	    truncate_mode='lastp',  # show only the last p merged clusters
-	    show_leaf_counts=False,  # otherwise numbers in brackets are counts
-	    leaf_rotation=90.,
-	    leaf_font_size=12.,
-	    show_contracted=False,  # to get a distribution impression in truncated branches
-	)
-	plt.show()
+	# dendrogram(
+	#     Z,
+	#     truncate_mode='lastp',  # show only the last p merged clusters
+	#     show_leaf_counts=False,  # otherwise numbers in brackets are counts
+	#     leaf_rotation=90.,
+	#     leaf_font_size=12.,
+	#     show_contracted=False,  # to get a distribution impression in truncated branches
+	# )
+	# plt.show()
 
 	# Store each cluster as an element of a dictionary.
 	clusters_collection = {}
