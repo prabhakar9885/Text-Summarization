@@ -138,6 +138,8 @@ print "Summary"
 print summaryAsText
 print "Saving summary to " + sourceFolder
 
-out_file = open( sourceFolder + ".summary", "w+" )
+out_file = sourceFolder + ".summary"
+print "Saving summary to: ", out_file
+out_file = open( out_file, "w+" )
 out_file.write(summaryAsText)
 out_file.close()
