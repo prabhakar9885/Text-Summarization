@@ -15,9 +15,9 @@ from operator import add
 import pickle as p
 import sys, os
 
-index = {}
-tokenAtIndex = {}
-sentindex = {}
+index = {}			# Stores the index of term in the idf list
+tokenAtIndex = {}	# Stores the mapping of the index->term w.r.t the idf list
+sentindex = {}		# Stores the mapping sentence->index
 
 def getword(idx):
 	for key, value in index.iteritems():
@@ -106,8 +106,8 @@ def kmeans(docvec, k, idf):
 	while iterations != 100:
 		iterations += 1
 		idx = 0
-		clusters = []
-		clusters2 = []
+		clusters = []	# Stores the vectors 
+		clusters2 = []	# Stores the index of the vectors w.r.t docvec
 		for j in xrange(k):
 			clusters.append([])
 			clusters2.append([])
