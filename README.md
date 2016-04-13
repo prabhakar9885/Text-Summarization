@@ -19,6 +19,8 @@
    $ java -cp C_Rouge/C_ROUGE7.jar executiverouge.C_ROUGE7 SysGeneratedSummary.txt  TestData/Test_Summaries/d30001t  1 A R
    ```
    Refer [ROUG Score computation](./C_Rouge/ReadMe)
+
+- [Git page](http://prabhakar9885.github.io/Text-Summarization/)
    
 
 
