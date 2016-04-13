@@ -16,7 +16,7 @@ from nltk import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from stemming.porter2 import stem
 import sys, os, time
-import k_means as km
+import clustering as km
 
 print "Loading data..."
 
@@ -35,7 +35,7 @@ if len( sys.argv ) != 3 and len( sys.argv ) != 2:
 cdf.init( idf_file = "idf.out" )
 
 clusters, clusters2 = p.load(open("./clusters.out", "rb"))
-km.index, km.tokenAtIndex = p.load( open("./indexForCluster.out", "rb") )
+km.docvec, km.index, km.tokenAtIndex, km.sentindex, km.vecindex = p.load( open("./indexForCluster.out", "rb") )
 
 
 sourceFolder = sys.argv[1]
@@ -98,9 +98,9 @@ while count_of_bytes_in_summary + shortest_sent_size <= summary_size_in_bytes an
 		all_sentence_vecs_without_v.remove( v )
 
 		f_av = cdf.compute_score( summary_vecs, seed_sentences_vecs, v, \
-																			clusters, lambdaVal = 1 )
+																			clusters, km.tokenAtIndex, lambdaVal = 1 )
 		f_a = cdf.compute_score( summary_vecs, seed_sentences_vecs, None, 
-																			clusters, lambdaVal = 1 )
+																			clusters, km.tokenAtIndex, lambdaVal = 1 )
 		all_sentence_vecs_without_v.append( v )
 
 		if (f_av - f_a >= 0 or max_profit_till_now == -1) \

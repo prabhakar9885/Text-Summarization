@@ -1,20 +1,17 @@
 # Text Summarizer
 
 ### How to run the code?
-- Generate ``idf.out`` file for the docs in ``folder containing text docs`` directory
-
+- **Syntax**:
   ```sh
-   $ python calculate_idf.py ../TEST_docs_Parsed/d30001t/
+   $ bash Main.sh <directory-path>  <Clustering-Algorithm> <No. of Clusters> 
    ```
--  Using ``k-means`` generate ``clusters`` for a sample file from ``TEST_docs_Parsed`` directory
+   - **directory-path**: The path to the directory that contains the documentes that are to be summarized
+   - **Clustering-Algorithm**: ``1`` -> k-means; ``2``-> Chinese Whispers ; ``3``-> Hierarchical Clustering
+   - **No. of clusters**: 		Required for k-means and Hierarchical Clustering
 
-   ```sh
-    $ python k_means.py ../TEST_docs_Parsed/d30001t/ 3
-   ```
-- Generate a summary of 300(approx) words, for the same doc-collection for which clustering is done in previous step
-
-   ```sh
-    $ python Generate_Summary.py ../TEST_docs_Parsed/d30001t 300
+   e.g.,
+  ```sh
+   $ bash bash Main.sh ../TEST_docs_Parsed/d30001t/ 3 4
    ```
 
 For more information check [README.pdf]
@@ -22,3 +19,9 @@ For more information check [README.pdf]
 
 ### Assumptions made:
 - In page 7, equation(6), alpha is taken as 1
+
+
+
+
+bash Main.sh ../TEST_docs_Parsed/d30024t 3
+java -cp ../C_Rouge/C_ROUGE7.jar executiverouge.C_ROUGE7 "Byte based Summary/d30007t.summary"  ../Test_Summaries/d30007t/  1 A R
