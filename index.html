@@ -82,5 +82,35 @@
 		<p>
 			We used the <strong>DUC-2004</strong> dataset which contains 50 TDT topics/events/timespan and a subset of the documents TDT annotators found for each topic/event/timespan. The documents were taken from the AP newswire and the New York Times newswire and subsets were formed with an average of 10 documents per subset. The dataset also contains very short summaries of each document ( 75 bytes) and a short summary<br />
 			( 665 bytes) of each cluster.</p>
+		<p>
+			&nbsp;</p>
+		<h2>
+			<strong>Submodular functions</strong></h2>
+		<p>
+			<strong>Submodular functions</strong> share many properties in common with convex functions, one of which is that they are closed under a number of common combination operations (summation, certain compositions, restrictions, and so on). These operations give us the tools necessary to design a powerful submodular objective for submodular document summarization that extends beyond any previous work.<br />
+			<br />
+			We are given a set of objects<em> V = {v1, ..., vn}</em> and a function <em>F : 2V &rarr; R</em> that returns a real value for any subset <em>S &sube; V</em>. We are interested in finding the subset of bounded size |S| &le; k that maximizes the function, e.g, argmax S&sube;V F(S). <strong>Sub-modular functions are those that satisfy the property of <em>diminishing returns:</em></strong> for any A &sube; B &sube; V v, a sub-modular function F must satisfy <strong><em>F(A + v) &minus; F(A) &ge; F(B + v) &minus; F(B).</em></strong> That is, the incremental value of v decreases as the context in which v is considered grows from A to B. F is monotone non-decreasing if &forall;A &sube; B, F(A) &ge; F(B)</p>
+		<p>
+			&nbsp;</p>
+		<h2>
+			<strong>Properties of a good Summary</strong></h2>
+		<p>
+			Two properties of a good summary are</p>
+		<ol>
+			<li>
+				Relevance and</li>
+			<li>
+				Diversity i.e., non- redundancy.</li>
+		</ol>
+		<p>
+			Objective functions for extractive summarization usually measure these two separately and then mix them together trading off encouraging relevance and penalizing redundancy. <em>The redundancy penalty usually violates the monotonicity of the objective functions</em>. <em>We therefore propose to positively reward diversity instead of negatively penalizing redundancy.</em> In particular, we model the summary quality as</p>
+		<p style="margin-left: 240px;">
+			<em>F(S) = L(S) + &lambda;R(S)</em></p>
+		<p>
+			<em>L(S) measures the coverage, or fidelity, of summary set S to the document, </em><br />
+			<em>R(S) rewards diversity in S, and </em><br />
+			<em><em>&lambda; </em>is a trade-off coefficient</em></p>
+		<p>
+			&nbsp;</p>
 	</body>
 </html>
