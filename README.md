@@ -22,6 +22,7 @@
 
 - [Git page](http://prabhakar9885.github.io/Text-Summarization/)
 - [Youtube](https://www.youtube.com/playlist?list=PLtBx4kn8YjxJUGsszlev52fC1Jn07HkUw)
+- [gitpage](http://prabhakar9885.github.io/Text-Summarization/index.html)
    
 
 
