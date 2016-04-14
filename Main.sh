@@ -35,6 +35,11 @@ if [[ -d "$dirName" ]]; then
 	echo -n "Generating Summary..."
 	python Generate_Summary.py "$dirName"
 	echo "done"
+	rm idf.out clusters.out indexForCluster.out
+	rm *.pyc
+	if [[ $clusteringAlgo -eq "2" ]]; then
+		rm edges.p test.gpickle
+	fi
 else
 	echo "Director not found: $dirName"
 fi
