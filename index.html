@@ -110,6 +110,19 @@
 			<em>L(S) measures the coverage, or fidelity, of summary set S to the document, </em><br />
 			<em>R(S) rewards diversity in S, and </em><br />
 			<em><em>&lambda; </em>is a trade-off coefficient</em></p>
+		<h3>
+			Coverage Measure,L(S):</h3>
+		<p>
+			L(S) can be interpreted either as a set function that measures the similarity of summary set S to the document to be summarized, or as a function representing some form of coverage of V by S.<br />
+			Most naturally, <em><strong>L(S) should be monotone</strong>, </em>as coverage improves with a larger summary.<br />
+			<strong>L(S) should also be submodular:</strong> consider adding a new sentence into two summary sets, one a subset of the other. Intuitively, the increment when adding a new sentence to the small summary set should be larger than the increment when adding it to the larger set, as the information carried by the new sentence might have already been covered by those sentences that are in the larger summary but not in the smaller<br />
+			summary. This is exactly the property of diminishing returns.</p>
+		<h3>
+			Diversity Measure,R(S):</h3>
+		<p>
+			Instead of penalizing redundancy by subtracting from the objective, we propose to reward diversity. The function R(S) rewards diversity in that there is usually more benefit to selecting a sentence from a cluster not yet having one of its elements already chosen. As soon as an element is selected from a cluster, other elements from the same cluster start having diminishing gain, thanks to the square root function.</p>
+		<p>
+			&nbsp;</p>
 		<p>
 			&nbsp;</p>
 	</body>
