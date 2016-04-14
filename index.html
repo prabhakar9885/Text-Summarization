@@ -123,7 +123,62 @@
 			Instead of penalizing redundancy by subtracting from the objective, we propose to reward diversity. The function R(S) rewards diversity in that there is usually more benefit to selecting a sentence from a cluster not yet having one of its elements already chosen. As soon as an element is selected from a cluster, other elements from the same cluster start having diminishing gain, thanks to the square root function.</p>
 		<p>
 			&nbsp;</p>
-		<p>
-			&nbsp;</p>
+		<h3>
+			Clustering Approaches:</h3>
+		<ol>
+			<li>
+				<h4>
+					K-means Clustering</h4>
+			</li>
+		</ol>
+		<p style="margin-left: 40px;">
+			We ran a Grid Search on the values of &alpha; and &lambda; to get the best optimal value to maximize the sub modular function.</p>
+		<p style="margin-left: 40px;">
+			<strong>Algorithm:</strong></p>
+		<ol>
+			<li style="margin-left: 40px;">
+				Summary &rarr; &phi;</li>
+			<li style="margin-left: 40px;">
+				allowedClusters &larr; allClusters</li>
+			<li style="margin-left: 40px;">
+				while size(Summary) &le; 665:<br />
+				pick the cluster most similar to corpus from<br />
+				allowedClusters &rarr; chosenCluster<br />
+				chosenSentence &larr; highest ranking sentence of chosenCluster based on coverage and diversity measure<br />
+				Summary &larr; chosenSentenceHierarchical Clustering</li>
+		</ol>
+		<ol start="2">
+			<li>
+				<h4>
+					Hierarchical clustering</h4>
+			</li>
+		</ol>
+		<p style="margin-left: 40px;">
+			Hierarchical clustering is a general family of clustering algorithms that build nested clusters by merging or splitting them successively. This hierarchy of clusters is represented as a tree (or dendrogram). The root of the tree is the unique cluster that gathers all the samples, the leaves being the clusters with<br />
+			only one sample.</p>
+		<p style="margin-left: 40px;">
+			Each observation(here sentence) starts in its own cluster, and clusters are successively merged together. The linkage criteria determines the metric used for the merge strategy. In computing the clusters, we used &rdquo;Ward&rdquo; criteria which minimizes the sum of squared distances within all clusters.</p>
+		<ol start="3">
+			<li>
+				<h4>
+					Chinese Whispers Graph-Clustering</h4>
+			</li>
+		</ol>
+		<p style="margin-left: 40px;">
+			The algorithm works in the following way in an undirected unweighted graph:</p>
+		<ol>
+			<li style="margin-left: 40px;">
+				All nodes are assigned to a random class. The number of initial classes equals the number of nodes.</li>
+			<li style="margin-left: 40px;">
+				Then all of the network nodes are selected one by one in a random order. Every node moves to the class which the given node connects with the most links. In the case of equality the cluster is randomly chosen from the equally linked classes.</li>
+			<li style="margin-left: 40px;">
+				Step two repeats itself until a predetermined number of iteration or until the process converges. In the end the emerging classes represent the clusters of the network.</li>
+		</ol>
+		<p style="margin-left: 40px;">
+			The predetermined threshold for the number of the iterations is needed because it is possible, that process does not converge.On the other hand in a network with approximately 10000 nodes the clusters does not change significantly after 40-50 iterations even if there is no convergence. Here we used similarity between nodes to be 0.05 atleast, only then we connect them with a weighted edge. And we set the number of iterations to 10.</p>
+		<ol start="3">
+			<li>
+				&nbsp;</li>
+		</ol>
 	</body>
 </html>
