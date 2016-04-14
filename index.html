@@ -5,15 +5,15 @@
 				margin: 3%;
 			}
 		</style>
-		<title> Document Summarization </title>
+		<title></title>
 	</head>
 	<body>
-		<p>
-			<h1>Document Summarization using Clustering and Submodular Functions</h1></p>
+		<h1>
+			<strong>Document Summarization using Clustering and Submodular Functions</strong></h1>
 		<p>
 			&nbsp;</p>
-		<p>
-			What do we do ?</p>
+		<h2>
+			What do we do ?</h2>
 		<ul>
 			<li>
 				We design novel methods to do the task of Text Summarization using a class of sub-modular functions and clustering techniques.</li>
@@ -24,7 +24,31 @@
 		</ul>
 		<p>
 			&nbsp;</p>
+		<h2>
+			<strong>How did we geerate the summary from a collection of documents?</strong></h2>
 		<p>
-			&nbsp;</p>
+			Extractive text summarization process can be divided into two steps:</p>
+		<ol>
+			<li>
+				Pre Processing step and</li>
+			<li>
+				Processing step.</li>
+		</ol>
+		<h3>
+			Pre-Processing</h3>
+		<p>
+			In Pre-Processing is structured representation of the original text. It usually includes:</p>
+		<ul>
+			<li>
+				Sentences boundary identification. In English, sentence boundary is identified with presence of dot at the end of sentence.</li>
+			<li>
+				Stop-Word Elimination. Common words with no semantics and which do not aggregate relevant information to the task are eliminated.</li>
+			<li>
+				Stemming - The purpose of stemming is to obtain the stem or radix of each word, which emphasize its semantics.</li>
+		</ul>
+		<h3>
+			Processing</h3>
+		<p>
+			In Processing step, the coverage and diversity measures are calculated for each sentence using their tf-idf scores. Then a weight-age is appropriately given to these parameters and the final score for a sentence is calculated. The top ranking sentences are selected for the final summary.</p>
 	</body>
 </html>
