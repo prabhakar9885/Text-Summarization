@@ -1,198 +1,138 @@
-<html>
-	<head>
-		<style type="text/css">
-			body{
-				margin: 3%;
-			}		</style>
-		<title></title>
-	</head>
-	<body>
-		<h1>
-			<strong>Document Summarization using Clustering and Submodular Functions</strong></h1>
-		<p>
-			&nbsp;</p>
-		<h2>
-			What do we do ?</h2>
-		<ul>
-			<li>
-				We design novel methods to do the task of Text Summarization using a class of sub-modular functions and clustering techniques.</li>
-			<li>
-				The sub-modular functions each combine two terms, one which encourages the summary to be representative of the corpus, and the other which positively rewards diversity.</li>
-			<li>
-				Our clustering techniques cluster similar types of sentences optimally.</li>
-		</ul>
-		<p>
-			&nbsp;</p>
-		<h2>
-			<strong>How did we generate the summary from a collection of documents?</strong></h2>
-		<p>
-			Extractive text summarization process can be divided into two steps:</p>
-		<ol>
-			<li>
-				Pre Processing step and</li>
-			<li>
-				Processing step.</li>
-		</ol>
-		<h3>
-			Pre-Processing</h3>
-		<p>
-			In Pre-Processing is structured representation of the original text. It usually includes:</p>
-		<ul>
-			<li>
-				Sentences boundary identification. In English, sentence boundary is identified with presence of dot at the end of sentence.</li>
-			<li>
-				Stop-Word Elimination. Common words with no semantics and which do not aggregate relevant information to the task are eliminated.</li>
-			<li>
-				Stemming - The purpose of stemming is to obtain the stem or radix of each word, which emphasize its semantics.</li>
-		</ul>
-		<h3>
-			Processing</h3>
-		<p>
-			In Processing step, the coverage and diversity measures are calculated for each sentence using their tf-idf scores. Then a weight-age is appropriately given to these parameters and the final score for a sentence is calculated. The top ranking sentences are selected for the final summary.</p>
-		<p>
-			&nbsp;</p>
-		<h2>
-			How do we evaluate the generated Summary?</h2>
-		<p>
-			<strong>ROUGE</strong>, or Recall-Oriented Understudy for Gisting Evaluation,</p>
-		<ul>
-			<li>
-				It is a set of metrics and a software package used for evaluating automatic summarization and machine translation software in natural language processing.</li>
-			<li>
-				The metrics compare an automatically produced summary or translation against a reference or a set of references (human-produced) summary or translation.</li>
-			<li>
-				Rouge generates three scores (recall, precision and F-measure) for each evaluation.</li>
-			<li>
-				Precision and F-measure scores are useful when the target summary length is not enforced. ROUGE uses model average to compute the overall ROUGE scores when there are multiple references. The model average option is specified using A (for Average) and the best model option is specified using B (for the Best).</li>
-			<li>
-				There is a specific format for the system generated file as:
-				<ol>
-					<li type="a">
-						Each of the system generated sentences should be in single line.</li>
-					<li type="a">
-						Output from the system should be preferably in form of plaint/text file.</li>
-				</ol>
-			</li>
-		</ul>
-		<p>
-			&nbsp;</p>
-		<h2>
-			Dataset</h2>
-		<p>
-			We used the <strong>DUC-2004</strong> dataset which contains 50 TDT topics/events/timespan and a subset of the documents TDT annotators found for each topic/event/timespan. The documents were taken from the AP newswire and the New York Times newswire and subsets were formed with an average of 10 documents per subset. The dataset also contains very short summaries of each document ( 75 bytes) and a short summary<br />
-			( 665 bytes) of each cluster.</p>
-		<p>
-			&nbsp;</p>
-		<h2>
-			<strong>Submodular functions</strong></h2>
-		<p>
-			<strong>Submodular functions</strong> share many properties in common with convex functions, one of which is that they are closed under a number of common combination operations (summation, certain compositions, restrictions, and so on). These operations give us the tools necessary to design a powerful submodular objective for submodular document summarization that extends beyond any previous work.<br />
-			<br />
-			We are given a set of objects<em> V = {v1, ..., vn}</em> and a function <em>F : 2V &rarr; R</em> that returns a real value for any subset <em>S &sube; V</em>. We are interested in finding the subset of bounded size |S| &le; k that maximizes the function, e.g, argmax S&sube;V F(S). <strong>Sub-modular functions are those that satisfy the property of <em>diminishing returns:</em></strong> for any A &sube; B &sube; V v, a sub-modular function F must satisfy <strong><em>F(A + v) &minus; F(A) &ge; F(B + v) &minus; F(B).</em></strong> That is, the incremental value of v decreases as the context in which v is considered grows from A to B. F is monotone non-decreasing if &forall;A &sube; B, F(A) &ge; F(B)</p>
-		<p>
-			&nbsp;</p>
-		<h2>
-			<strong>Properties of a good Summary</strong></h2>
-		<p>
-			Two properties of a good summary are</p>
-		<ol>
-			<li>
-				Relevance and</li>
-			<li>
-				Diversity i.e., non- redundancy.</li>
-		</ol>
-		<p>
-			Objective functions for extractive summarization usually measure these two separately and then mix them together trading off encouraging relevance and penalizing redundancy. <em>The redundancy penalty usually violates the monotonicity of the objective functions</em>. <em>We therefore propose to positively reward diversity instead of negatively penalizing redundancy.</em> In particular, we model the summary quality as</p>
-		<p style="margin-left: 240px;">
-			<em>F(S) = L(S) + &lambda;R(S)</em></p>
-		<p>
-			<em>L(S) measures the coverage, or fidelity, of summary set S to the document, </em><br />
-			<em>R(S) rewards diversity in S, and </em><br />
-			<em><em>&lambda; </em>is a trade-off coefficient</em></p>
-		<h3>
-			Coverage Measure,L(S):</h3>
-		<p>
-			L(S) can be interpreted either as a set function that measures the similarity of summary set S to the document to be summarized, or as a function representing some form of coverage of V by S.<br />
-			Most naturally, <em><strong>L(S) should be monotone</strong>, </em>as coverage improves with a larger summary.<br />
-			<strong>L(S) should also be submodular:</strong> consider adding a new sentence into two summary sets, one a subset of the other. Intuitively, the increment when adding a new sentence to the small summary set should be larger than the increment when adding it to the larger set, as the information carried by the new sentence might have already been covered by those sentences that are in the larger summary but not in the smaller<br />
-			summary. This is exactly the property of diminishing returns.</p>
-		<h3>
-			Diversity Measure,R(S):</h3>
-		<p>
-			Instead of penalizing redundancy by subtracting from the objective, we propose to reward diversity. The function R(S) rewards diversity in that there is usually more benefit to selecting a sentence from a cluster not yet having one of its elements already chosen. As soon as an element is selected from a cluster, other elements from the same cluster start having diminishing gain, thanks to the square root function.</p>
-		<p>
-			&nbsp;</p>
-		<h3>
-			Clustering Approaches:</h3>
-		<ol>
-			<li>
-				<h4>
-					K-means Clustering</h4>
-			</li>
-		</ol>
-		<p style="margin-left: 40px;">
-			We ran a Grid Search on the values of &alpha; and &lambda; to get the best optimal value to maximize the sub modular function.</p>
-		<p style="margin-left: 40px;">
-			<strong>Algorithm:</strong></p>
-		<ol>
-			<li style="margin-left: 40px;">
-				Summary &rarr; &phi;</li>
-			<li style="margin-left: 40px;">
-				allowedClusters &larr; allClusters</li>
-			<li style="margin-left: 40px;">
-				while size(Summary) &le; 665:<br />
-				pick the cluster most similar to corpus from<br />
-				allowedClusters &rarr; chosenCluster<br />
-				chosenSentence &larr; highest ranking sentence of chosenCluster based on coverage and diversity measure<br />
-				Summary &larr; chosenSentenceHierarchical Clustering</li>
-		</ol>
-		<ol start="2">
-			<li>
-				<h4>
-					Hierarchical clustering</h4>
-			</li>
-		</ol>
-		<p style="margin-left: 40px;">
-			Hierarchical clustering is a general family of clustering algorithms that build nested clusters by merging or splitting them successively. This hierarchy of clusters is represented as a tree (or dendrogram). The root of the tree is the unique cluster that gathers all the samples, the leaves being the clusters with<br />
-			only one sample.</p>
-		<p style="margin-left: 40px;">
-			Each observation(here sentence) starts in its own cluster, and clusters are successively merged together. The linkage criteria determines the metric used for the merge strategy. In computing the clusters, we used &rdquo;Ward&rdquo; criteria which minimizes the sum of squared distances within all clusters.</p>
-		<ol start="3">
-			<li>
-				<h4>
-					Chinese Whispers Graph-Clustering</h4>
-			</li>
-		</ol>
-		<p style="margin-left: 40px;">
-			The algorithm works in the following way in an undirected unweighted graph:</p>
-		<ol>
-			<li style="margin-left: 40px;">
-				All nodes are assigned to a random class. The number of initial classes equals the number of nodes.</li>
-			<li style="margin-left: 40px;">
-				Then all of the network nodes are selected one by one in a random order. Every node moves to the class which the given node connects with the most links. In the case of equality the cluster is randomly chosen from the equally linked classes.</li>
-			<li style="margin-left: 40px;">
-				Step two repeats itself until a predetermined number of iteration or until the process converges. In the end the emerging classes represent the clusters of the network.</li>
-		</ol>
-		<p style="margin-left: 40px;">
-			The predetermined threshold for the number of the iterations is needed because it is possible, that process does not converge.On the other hand in a network with approximately 10000 nodes the clusters does not change significantly after 40-50 iterations even if there is no convergence. Here we used similarity between nodes to be 0.05 atleast, only then we connect them with a weighted edge. And we set the number of iterations to 10.</p>
-		<p>
-			&nbsp;</p>
-		<h2>
-			Results</h2>
-		<p>
-			The following score is obtained on running the code with &lambda; = 1 and &alpha; = 0</p>
-		<p style="margin-left: 80px;">
-			K-Means: 0.3071840<br />
-			Chinese Whisper: 0.306831<br />
-			Hierarchical: 0.303747</p>
-		<p style="margin-left: 80px;">
-			&nbsp;</p>
-		<h2>
-			Links</h2>
-		<p>
-			<a href="https://github.com/prabhakar9885/Text-Summarization">Github </a><br />
-			<a href="https://www.youtube.com/playlist?list=PLtBx4kn8YjxJUGsszlev52fC1Jn07HkUw">Youtube</a><br />
-			<a href="http://www.slideshare.net/prabhakar9885/text-summarization-60954970">slideshare</a><br />
-			<a href="https://www.dropbox.com/sh/uaxc2cpyy3pi97z/AADkuZ_24OHVi3PJmEAziLxha?dl=0">dropbox</a></p>
-	</body>
-</html>
+<h1><strong>Document Summarization using Clustering and Submodular Functions</strong></h1>
+<p>&nbsp;</p>
+<h2>What do we do ?</h2>
+<ul>
+<li>We design novel methods to do the task of Text Summarization using a class of sub-modular functions and clustering techniques.</li>
+<li>The sub-modular functions each combine two terms, one which encourages the summary to be representative of the corpus, and the other which positively rewards diversity.</li>
+<li>Our clustering techniques cluster similar types of sentences optimally.</li>
+</ul>
+<p>&nbsp;</p>
+<h2><strong>How did we generate the summary from a collection of documents?</strong></h2>
+<p>Extractive text summarization process can be divided into two steps:</p>
+<ol>
+<li>Pre Processing step and</li>
+<li>Processing step.</li>
+</ol>
+<h3>Pre-Processing</h3>
+<p>In Pre-Processing is structured representation of the original text. It usually includes:</p>
+<ul>
+<li>Sentences boundary identification. In English, sentence boundary is identified with presence of dot at the end of sentence.</li>
+<li>Stop-Word Elimination. Common words with no semantics and which do not aggregate relevant information to the task are eliminated.</li>
+<li>Stemming - The purpose of stemming is to obtain the stem or radix of each word, which emphasize its semantics.</li>
+</ul>
+<h3>Processing</h3>
+<p>In Processing step, the coverage and diversity measures are calculated for each sentence using their tf-idf scores. Then a weight-age is appropriately given to these parameters and the final score for a sentence is calculated. The top ranking sentences are selected for the final summary.</p>
+<p>&nbsp;</p>
+<h2>How do we evaluate the generated Summary?</h2>
+<p><strong>ROUGE</strong>, or Recall-Oriented Understudy for Gisting Evaluation,</p>
+<ul>
+<li>It is a set of metrics and a software package used for evaluating automatic summarization and machine translation software in natural language processing.</li>
+<li>The metrics compare an automatically produced summary or translation against a reference or a set of references (human-produced) summary or translation.</li>
+<li>Rouge generates three scores (recall, precision and F-measure) for each evaluation.</li>
+<li>Precision and F-measure scores are useful when the target summary length is not enforced. ROUGE uses model average to compute the overall ROUGE scores when there are multiple references. The model average option is specified using A (for Average) and the best model option is specified using B (for the Best).</li>
+<li>There is a specific format for the system generated file as:
+<ol>
+<li type="a">Each of the system generated sentences should be in single line.</li>
+<li type="a">Output from the system should be preferably in form of plaint/text file.</li>
+</ol>
+</li>
+</ul>
+<p>&nbsp;</p>
+<h2>Dataset</h2>
+<p>We used the <strong>DUC-2004</strong> dataset which contains 50 TDT topics/events/timespan and a subset of the documents TDT annotators found for each topic/event/timespan. The documents were taken from the AP newswire and the New York Times newswire and subsets were formed with an average of 10 documents per subset. The dataset also contains very short summaries of each document ( 75 bytes) and a short summary<br /> ( 665 bytes) of each cluster.</p>
+<p>&nbsp;</p>
+<h2><strong>Submodular functions</strong></h2>
+<p><strong>Submodular functions</strong> share many properties in common with convex functions, one of which is that they are closed under a number of common combination operations (summation, certain compositions, restrictions, and so on). These operations give us the tools necessary to design a powerful submodular objective for submodular document summarization that extends beyond any previous work.<br /> <br /> We are given a set of objects<em> V = {v1, ..., vn}</em> and a function <em>F : 2V &rarr; R</em> that returns a real value for any subset <em>S &sube; V</em>. We are interested in finding the subset of bounded size |S| &le; k that maximizes the function, e.g, argmax S&sube;V F(S). <strong>Sub-modular functions are those that satisfy the property of <em>diminishing returns:</em></strong> for any A &sube; B &sube; V v, a sub-modular function F must satisfy <strong><em>F(A + v) &minus; F(A) &ge; F(B + v) &minus; F(B).</em></strong> That is, the incremental value of v decreases as the context in which v is considered grows from A to B. F is monotone non-decreasing if &forall;A &sube; B, F(A) &ge; F(B)</p>
+<p>&nbsp;</p>
+<h2><strong>Properties of a good Summary</strong></h2>
+<p>Two properties of a good summary are</p>
+<ol>
+<li>Relevance and</li>
+<li>Diversity i.e., non- redundancy.</li>
+</ol>
+<p>Objective functions for extractive summarization usually measure these two separately and then mix them together trading off encouraging relevance and penalizing redundancy. <em>The redundancy penalty usually violates the monotonicity of the objective functions</em>. <em>We therefore propose to positively reward diversity instead of negatively penalizing redundancy.</em> In particular, we model the summary quality as</p>
+<p style="margin-left: 240px;"><em>F(S) = L(S) + &lambda;R(S)</em></p>
+<p><em>L(S) measures the coverage, or fidelity, of summary set S to the document, </em><br /> <em>R(S) rewards diversity in S, and </em><br /> <em><em>&lambda; </em>is a trade-off coefficient</em></p>
+<h3>Coverage Measure,L(S):</h3>
+<p>L(S) can be interpreted either as a set function that measures the similarity of summary set S to the document to be summarized, or as a function representing some form of coverage of V by S.<br /> Most naturally, <em><strong>L(S) should be monotone</strong>, </em>as coverage improves with a larger summary.<br /> <strong>L(S) should also be submodular:</strong> consider adding a new sentence into two summary sets, one a subset of the other. Intuitively, the increment when adding a new sentence to the small summary set should be larger than the increment when adding it to the larger set, as the information carried by the new sentence might have already been covered by those sentences that are in the larger summary but not in the smaller<br /> summary. This is exactly the property of diminishing returns.</p>
+<h3>Diversity Measure,R(S):</h3>
+<p>Instead of penalizing redundancy by subtracting from the objective, we propose to reward diversity. The function R(S) rewards diversity in that there is usually more benefit to selecting a sentence from a cluster not yet having one of its elements already chosen. As soon as an element is selected from a cluster, other elements from the same cluster start having diminishing gain, thanks to the square root function.</p>
+<p>&nbsp;</p>
+<h3>Clustering Approaches:</h3>
+<ol>
+<li>
+<h4>K-means Clustering</h4>
+</li>
+</ol>
+<p style="margin-left: 40px;">We ran a Grid Search on the values of &alpha; and &lambda; to get the best optimal value to maximize the sub modular function.</p>
+<p style="margin-left: 40px;"><strong>Algorithm:</strong></p>
+<ol>
+<li style="margin-left: 40px;">Summary &rarr; &phi;</li>
+<li style="margin-left: 40px;">allowedClusters &larr; allClusters</li>
+<li style="margin-left: 40px;">while size(Summary) &le; 665:<br /> pick the cluster most similar to corpus from<br /> allowedClusters &rarr; chosenCluster<br /> chosenSentence &larr; highest ranking sentence of chosenCluster based on coverage and diversity measure<br /> Summary &larr; chosenSentenceHierarchical Clustering</li>
+</ol>
+<ol start="2">
+<li>
+<h4>Hierarchical clustering</h4>
+</li>
+</ol>
+<p style="margin-left: 40px;">Hierarchical clustering is a general family of clustering algorithms that build nested clusters by merging or splitting them successively. This hierarchy of clusters is represented as a tree (or dendrogram). The root of the tree is the unique cluster that gathers all the samples, the leaves being the clusters with<br /> only one sample.</p>
+<p style="margin-left: 40px;">Each observation(here sentence) starts in its own cluster, and clusters are successively merged together. The linkage criteria determines the metric used for the merge strategy. In computing the clusters, we used &rdquo;Ward&rdquo; criteria which minimizes the sum of squared distances within all clusters.</p>
+<ol start="3">
+<li>
+<h4>Chinese Whispers Graph-Clustering</h4>
+</li>
+</ol>
+<p style="margin-left: 40px;">The algorithm works in the following way in an undirected unweighted graph:</p>
+<ol>
+<li style="margin-left: 40px;">All nodes are assigned to a random class. The number of initial classes equals the number of nodes.</li>
+<li style="margin-left: 40px;">Then all of the network nodes are selected one by one in a random order. Every node moves to the class which the given node connects with the most links. In the case of equality the cluster is randomly chosen from the equally linked classes.</li>
+<li style="margin-left: 40px;">Step two repeats itself until a predetermined number of iteration or until the process converges. In the end the emerging classes represent the clusters of the network.</li>
+</ol>
+<p style="margin-left: 40px;">The predetermined threshold for the number of the iterations is needed because it is possible, that process does not converge.On the other hand in a network with approximately 10000 nodes the clusters does not change significantly after 40-50 iterations even if there is no convergence. Here we used similarity between nodes to be 0.05 atleast, only then we connect them with a weighted edge. And we set the number of iterations to 10.</p>
+<p>&nbsp;</p>
+<h2>Results</h2>
+<p>The following score is obtained on running the code with &lambda; = 1 and &alpha; = 0</p>
+<p>
+<table>
+<tr>
+<th>Dataset</th> <th>K-means</th> <th>Chinese Whisper</th> <th>Hierarchical</th>
+</tr>
+<tr> <td>d30001t </td> <td> 0.3458823529411765 </td> <td> 0.3458823529411765 </td> <td> 0.3458823529411765 </td> </tr>
+<tr> <td>d30002t </td> <td> 0.2717149220489978 </td> <td> 0.2717149220489978 </td> <td> 0.2717149220489978 </td> </tr>
+<tr> <td>d30003t </td> <td> 0.3463414634146341 </td> <td> 0.3463414634146341 </td> <td> 0.3463414634146341 </td> </tr>
+<tr> <td>d30005t </td><td> 0.21541950113378686 </td> <td> 0.21541950113378686 </td> <td> 0.21541950113378686 </td> </tr>
+<tr> <td>d30006t </td> <td> 0.3160270880361174 </td> <td> 0.3160270880361174 </td> <td> 0.3160270880361174 </td> </tr>
+<tr> <td>d30007t </td> <td> 0.3373493975903614 </td> <td> 0.3373493975903614 </td> <td> 0.3373493975903614 </td> </tr>
+<tr> <td>d30008t </td><td> 0.30260047281323876 </td> <td> 0.30260047281323876 </td> <td> 0.30260047281323876 </td> </tr>
+<tr> <td>d30010t </td><td> 0.31234866828087166 </td> <td> 0.3341404358353511 </td> <td> 0.3341404358353511 </td> </tr>
+<tr> <td>d30011t </td><td> 0.26715686274509803 </td> <td> 0.26715686274509803 </td> <td> 0.19852941176470587 </td> </tr>
+<tr> <td>d30015t </td><td> 0.31220657276995306 </td> <td> 0.31220657276995306 </td> <td> 0.31220657276995306 </td> </tr>
+<tr> <td>d30017t </td><td> 0.28893905191873587 </td> <td> 0.28893905191873587 </td> <td> 0.28893905191873587 </td> </tr>
+<tr> <td>d30020t </td> <td> 0.3091334894613583 </td> <td> 0.3091334894613583 </td> <td> 0.3091334894613583 </td> </tr>
+<tr> <td>d30024t </td> <td> 0.2639225181598063 </td> <td> 0.2639225181598063 </td> <td> 0.2639225181598063 </td> </tr>
+<tr> <td>d30026t </td> <td> 0.3530864197530864 </td> <td> 0.3530864197530864 </td> <td> 0.3530864197530864 </td> </tr>
+<tr> <td>d30027t </td><td> 0.22249388753056235 </td> <td> 0.22249388753056235 </td> <td> 0.22493887530562348 </td> </tr>
+<tr> <td>d30028t </td> <td> 0.2857142857142857 </td> <td> 0.2857142857142857 </td> <td> 0.2833333333333333 </td> </tr>
+<tr> <td>d30029t </td> <td> 0.2982062780269058 </td> <td> 0.2982062780269058 </td> <td> 0.2982062780269058 </td> </tr>
+<tr> <td>d30031t </td><td> 0.31096196868008946 </td> <td> 0.31096196868008946 </td> <td> 0.31096196868008946 </td> </tr>
+<tr> <td>d30033t </td> <td> 0.3480278422273782 </td> <td> 0.3480278422273782 </td> <td> 0.3480278422273782 </td> </tr>
+<tr> <td>d30034t </td> <td> 0.2961165048543689 </td> <td> 0.2961165048543689 </td> <td> 0.24271844660194175 </td> </tr>
+<tr> <td>d30036t </td><td> 0.28438228438228436 </td> <td> 0.28438228438228436 </td> <td> 0.28438228438228436 </td> </tr>
+<tr> <td>d30037t </td><td> 0.35514018691588783 </td> <td> 0.32242990654205606 </td> <td> 0.32242990654205606 </td> </tr>
+<tr> <td>d30038t </td><td> 0.35944700460829493 </td> <td> 0.35944700460829493 </td> <td> 0.35944700460829493 </td> </tr>
+<tr> <td>d30040t </td> <td> 0.3024390243902439 </td> <td> 0.3024390243902439 </td> <td> 0.32195121951219513 </td> </tr>
+<tr> <td>d30042t </td> <td> 0.2725274725274725 </td> <td> 0.2725274725274725 </td> <td> 0.2725274725274725 </td> </tr>
+<tr> <td>d30044t </td><td> 0.32860520094562645 </td> <td> 0.32860520094562645 </td> <td> 0.32860520094562645 </td> </tr>
+<tr> <td>d30045t </td><td> 0.29464285714285715 </td> <td> 0.29464285714285715 </td> <td> 0.29464285714285715 </td> </tr>
+<tr> <td>d30047t </td> <td> 0.3835920177383592 </td> <td> 0.3835920177383592 </td> <td> 0.3835920177383592 </td> </tr>
+<tr> <td>d30048t </td> <td> 0.2636363636363636 </td> <td> 0.2636363636363636 </td> <td> 0.27045454545454545 </td> </tr>
+<tr> <td>d30049t </td><td> 0.38137472283813745 </td> <td> 0.38137472283813745 </td> <td> 0.38137472283813745 </td> </tr>
+<tr> <td>d30050t </td> <td> 0.2932692307692308 </td> <td> 0.2932692307692308 </td> <td> 0.2932692307692308 </td> </tr>
+<tr> <td> <b>Average</b> </td> <td> <b> 0.3071840</b> </td> <td> <b> 0.306831</b> </td>  <td> <b>0.303747</b> </td> </tr>
+</table>
+</p>
+
+<p style="margin-left: 80px;">&nbsp;</p>
+<h2>Links</h2>
+<p><a href="https://github.com/prabhakar9885/Text-Summarization">Github </a><br /> <a href="https://www.youtube.com/playlist?list=PLtBx4kn8YjxJUGsszlev52fC1Jn07HkUw">Youtube</a><br /> <a href="http://www.slideshare.net/prabhakar9885/text-summarization-60954970">slideshare</a><br /> <a href="https://www.dropbox.com/sh/uaxc2cpyy3pi97z/AADkuZ_24OHVi3PJmEAziLxha?dl=0">dropbox</a></p>
